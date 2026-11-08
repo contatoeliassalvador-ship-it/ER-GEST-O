@@ -1,13 +1,17 @@
 {
   "name": "er-gestao-server",
   "version": "1.0.0",
-  "description": "Servidor Backend e Frontend do ER GESTAO",
+  "description": "ER GESTAO com WhatsApp Baileys e IA Integrados",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "@supabase/supabase-js": "^2.39.8",
+    "@whiskeysockets/baileys": "^6.7.8",
+    "express": "^4.19.2",
+    "pino": "^8.19.0",
+    "qrcode": "^1.5.3"
   },
   "engines": {
     "node": ">=18.0.0"
