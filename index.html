@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ER GESTÃO</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS Client Oficial -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Ícones Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .input-padrao {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.85rem;
+      border-radius: 0.75rem;
+      border: 1px solid #E2E8F0;
+      background-color: #FFFFFF;
+      color: #0F172A;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-padrao:focus {
+      border-color: #2563EB;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-900 min-h-screen antialiased flex flex-col md:flex-row">
+
+  <!-- ================= TELA DE LOGIN ESTILO NUBANK ================= -->
+  <div id="tela-login" class="fixed inset-0 bg-[#F8FAFC] z-50 flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white border border-slate-200/90 rounded-3xl p-8 shadow-sm space-y-6">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-950">ER GESTÃO</h1>
+        <p class="text-xs uppercase tracking-wider text-blue-600 font-semibold mt-1">
+          Acesso Administrativo
+        </p>
+      </div>
+
+      <div id="erro-login" class="hidden p-3 rounded-xl bg-red-50 text-red-700 text-xs font-medium border border-red-200"></div>
+
+      <form id="form-auth" onsubmit="realizarLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">E-mail</label>
+          <input type="email" id="auth-email" required class="input-padrao" placeholder="seu@email.com">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Senha</label>
+          <input type="password" id="auth-senha" required class="input-padrao" placeholder="••••••••">
+        </div>
+
+        <button type="submit" id="btn-entrar" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold text-xs transition shadow-sm">
+          Entrar no Sistema
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= BARRA LATERAL ================= -->
+  <aside class="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white h-screen sticky top-0 justify-between p-5">
+    <div class="space-y-8">
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-slate-950">ER GESTÃO</h1>
+        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-0.5">Controle Integrado</p>
+      </div>
+
+      <nav class="space-y-1">
+        <button onclick="trocarAba('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-600"></i> Painel Geral
+        </button>
+        <button onclick="trocarAba('documentos')" id="btn-documentos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+          <i data-lucide="folder-archive" class="w-4 h-4 text-slate-400"></i> Documentos por Placa
+        </button>
+        <button onclick="trocarAba('gastos')" id="btn-gastos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+          <i data-lucide="receipt" class="w-4 h-4 text-slate-400"></i> Despesas & Gastos
+        </button>
+        <button onclick="trocarAba('manutencoes')" id="btn-manutencoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+          <i data-lucide="wrench" class="w-4 h-4 text-slate-400"></i> Manutenções
+        </button>
+        <button onclick="trocarAba('veiculos')" id="btn-veiculos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
+          <i data-lucide="truck" class="w-4 h-4 text-slate-400"></i> Veículos & Máquinas
+        </button>
+      </nav>
+    </div>
+
+    <div class="pt-4 border-t border-slate-100">
+      <div id="user-display" class="text-[11px] text-slate-500 font-medium truncate mb-2"></div>
+      <button onclick="desconectar()" class="w-full flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-red-600 transition">
+        <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Desconectar
+      </button>
+    </div>
+  </aside>
+
+  <!-- ================= PAINEL PRINCIPAL ================= -->
+  <main class="flex-1 flex flex-col min-w-0">
+    
+    <!-- SELETOR ESTILO NUBANK -->
+    <header class="bg-white border-b border-slate-200 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Contexto:</span>
+        <span id="label-ambiente" class="text-xs font-bold text-slate-900">EMPRESA — ER GUINDASTES</span>
+      </div>
+
+      <div class="inline-flex bg-slate-100 p-1 rounded-2xl">
+        <button id="toggle-empresa" onclick="alternarAmbiente('empresa')" class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-sm transition">
+          <i data-lucide="building-2" class="w-3.5 h-3.5"></i> EMPRESA (ER GUINDASTES)
+        </button>
+        <button id="toggle-pf" onclick="alternarAmbiente('pessoa_fisica')" class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i> PESSOA FÍSICA
+        </button>
+      </div>
+    </header>
+
+    <div class="p-6 md:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- ABA: DASHBOARD -->
+      <section id="aba-dashboard" class="space-y-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Gastos no Mês</div>
+            <div id="kpi-gastos" class="text-2xl font-bold text-slate-950 mt-2">R$ 0,00</div>
+            <div id="kpi-ambiente-sub" class="text-[11px] text-slate-400 mt-1">Ambiente atual</div>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm">
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total de Manutenções</div>
+            <div id="kpi-manutencoes" class="text-2xl font-bold text-slate-950 mt-2">0</div>
+            <div class="text-[11px] text-slate-400 mt-1">Monitoradas</div>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm">
+            <div class="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Próximas (15 dias)</div>
+            <div id="kpi-proximas" class="text-2xl font-bold text-amber-600 mt-2">0</div>
+            <div class="text-[11px] text-slate-400 mt-1">Revisões agendadas</div>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm">
+            <div class="text-[11px] font-bold text-red-600 uppercase tracking-wider">Atrasadas</div>
+            <div id="kpi-atrasadas" class="text-2xl font-bold text-red-600 mt-2">0</div>
+            <div class="text-[11px] text-slate-400 mt-1">Exigem atenção</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2.5">
+          <button onclick="abrirModalGasto()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition shadow-sm">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Novo Gasto
+          </button>
+          <button onclick="abrirModalManutencao()" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition shadow-sm">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Registrar Manutenção
+          </button>
+          <button onclick="abrirModalVeiculo()" class="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl transition">
+            <i data-lucide="truck" class="w-3.5 h-3.5"></i> Cadastrar Veículo
+          </button>
+          <button onclick="abrirModalDoc()" class="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl transition">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Anexar Documento
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-900 mb-4">Gastos por Categoria</h3>
+            <div id="categorias-lista" class="space-y-3 text-xs text-slate-400">Nenhum gasto registrado.</div>
+          </div>
+          <div class="lg:col-span-2 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
+            <h3 class="text-sm font-bold text-slate-900 mb-4">Últimos Gastos Lançados</h3>
+            <div id="ultimos-gastos-lista" class="divide-y divide-slate-100 text-xs text-slate-400">Nenhum lançamento.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABA: DOCUMENTOS POR PLACA -->
+      <section id="aba-documentos" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-950">Central de Documentos & Arquivos</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Organizado por equipamento e placa.</p>
+          </div>
+          <button onclick="abrirModalDoc()" class="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-xs font-semibold rounded-xl text-white hover:bg-blue-700 transition shadow-sm w-fit">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Enviar Novo Documento
+          </button>
+        </div>
+        <div class="space-y-2">
+          <label class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Filtrar por Placa / Equipamento:</label>
+          <div id="filtro-placas" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div id="grade-documentos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- ABA: GASTOS -->
+      <section id="aba-gastos" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-slate-950">Lançamentos de Gastos</h2>
+          <button onclick="abrirModalGasto()" class="flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-xs font-semibold rounded-xl text-white hover:bg-blue-700 transition">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar Gasto
+          </button>
+        </div>
+        <div class="bg-white border border-slate-200/90 rounded-3xl overflow-hidden shadow-sm">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
+              <tr>
+                <th class="py-3 px-4">Descrição</th>
+                <th class="py-3 px-4">Categoria</th>
+                <th class="py-3 px-4">Data</th>
+                <th class="py-3 px-4">Fornecedor</th>
+                <th class="py-3 px-4">Veículo</th>
+                <th class="py-3 px-4">Valor</th>
+                <th class="py-3 px-4 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-gastos" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ABA: MANUTENÇÕES -->
+      <section id="aba-manutencoes" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-slate-950">Controle de Manutenções</h2>
+          <button onclick="abrirModalManutencao()" class="flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-xs font-semibold rounded-xl text-white hover:bg-blue-700 transition">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Registrar Manutenção
+          </button>
+        </div>
+        <div id="lista-manutencoes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </section>
+
+      <!-- ABA: VEÍCULOS -->
+      <section id="aba-veiculos" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-slate-950">Veículos & Equipamentos</h2>
+          <button onclick="abrirModalVeiculo()" class="flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-xs font-semibold rounded-xl text-white hover:bg-blue-700 transition">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Novo Equipamento
+          </button>
+        </div>
+        <div id="lista-veiculos" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div id="modal-container" class="fixed inset-0 bg-slate-950/40 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 id="modal-titulo" class="text-sm font-bold text-slate-950">Novo Registro</h3>
+        <button onclick="fecharModal()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div id="modal-corpo"></div>
+    </div>
+  </div>
+
+  <script>
+    // ================= CONFIGURAÇÃO DEFINITIVA =================
+    const SUPABASE_URL = "https://rlsjdmuufarfkjmyfanl.supabase.co";
+    // COLE SUA CHAVE ANON ENTRE AS ASPAS ABAIXO:
+    const SUPABASE_ANON_KEY = "COLE_SUA_CHAVE_ANON_AQUI";
+
+    const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let usuarioAtual = null;
+    let ambienteAtual = 'empresa';
+    let placaFiltroAtual = 'todos';
+
+    let veiculosCache = [];
+    let gastosCache = [];
+    let manutencoesCache = [];
+    let documentosCache = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      sbClient.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          usuarioAtual = session.user;
+          posLogin();
+        }
+      });
+    });
+
+    async function realizarLogin(e) {
+      e.preventDefault();
+      const erroDiv = document.getElementById('erro-login');
+      erroDiv.classList.add('hidden');
+
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-senha').value.trim();
+
+      const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        erroDiv.innerText = `Erro de Autenticação: ${error.message}`;
+        erroDiv.classList.remove('hidden');
+        return;
+      }
+
+      usuarioAtual = data.user;
+      posLogin();
+    }
+
+    function posLogin() {
+      document.getElementById('tela-login').classList.add('hidden');
+      document.getElementById('user-display').innerText = usuarioAtual.email;
+      carregarTudoDoBanco();
+    }
+
+    async function desconectar() {
+      await sbClient.auth.signOut();
+      usuarioAtual = null;
+      document.getElementById('tela-login').classList.remove('hidden');
+    }
+
+    function alternarAmbiente(amb) {
+      ambienteAtual = amb;
+      placaFiltroAtual = 'todos';
+
+      const btnEmpresa = document.getElementById('toggle-empresa');
+      const btnPF = document.getElementById('toggle-pf');
+
+      if (amb === 'empresa') {
+        btnEmpresa.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-sm transition";
+        btnPF.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+        document.getElementById('label-ambiente').innerText = "EMPRESA — ER GUINDASTES";
+      } else {
+        btnPF.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-sm transition";
+        btnEmpresa.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+        document.getElementById('label-ambiente').innerText = "PESSOA FÍSICA";
+      }
+
+      carregarTudoDoBanco();
+    }
+
+    async function carregarTudoDoBanco() {
+      if (!usuarioAtual) return;
+
+      try {
+        const { data: vData } = await sbClient.from('veiculos').select('*').eq('ambiente', ambienteAtual).order('nome');
+        veiculosCache = vData || [];
+
+        const { data: gData } = await sbClient.from('gastos').select('*, veiculos(nome, placa)').eq('ambiente', ambienteAtual).order('data', { ascending: false });
+        gastosCache = gData || [];
+
+        const { data: mData } = await sbClient.from('manutencoes').select('*, veiculos(nome, placa)').eq('ambiente', ambienteAtual).order('data_manutencao', { ascending: false });
+        manutencoesCache = mData || [];
+
+        const { data: dData } = await sbClient.from('documentos').select('*, veiculos(nome, placa)').eq('ambiente', ambienteAtual).order('created_at', { ascending: false });
+        documentosCache = dData || [];
+
+        renderizarDashboard();
+        renderizarDocumentos();
+        renderizarGastos();
+        renderizarManutencoes();
+        renderizarVeiculos();
+        lucide.createIcons();
+      } catch (err) {
+        console.error("Erro ao carregar dados:", err);
+      }
+    }
+
+    function renderizarDashboard() {
+      const totalGastos = gastosCache.reduce((acc, g) => acc + Number(g.valor), 0);
+      document.getElementById('kpi-gastos').innerText = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalGastos);
+      document.getElementById('kpi-manutencoes').innerText = manutencoesCache.length;
+
+      let atrasadas = 0;
+      let proximas = 0;
+      const hoje = new Date();
+
+      manutencoesCache.forEach(m => {
+        if (m.proxima_data) {
+          const dif = Math.ceil((new Date(m.proxima_data) - hoje) / (1000 * 60 * 60 * 24));
+          if (dif < 0) atrasadas++;
+          else if (dif <= 15) proximas++;
+        }
+      });
+
+      document.getElementById('kpi-proximas').innerText = proximas;
+      document.getElementById('kpi-atrasadas').innerText = atrasadas;
+
+      const ultimos = gastosCache.slice(0, 5);
+      const divUltimos = document.getElementById('ultimos-gastos-lista');
+      if (ultimos.length === 0) {
+        divUltimos.innerHTML = '<div class="py-4 text-center text-slate-400">Nenhum gasto registrado neste ambiente.</div>';
+      } else {
+        divUltimos.innerHTML = ultimos.map(g => `
+          <div class="py-2.5 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-semibold text-slate-800">${g.descricao}</div>
+              <div class="text-slate-400 text-[11px]">${g.data} • ${g.categoria} ${g.veiculos ? `• ${g.veiculos.nome}` : ''}</div>
+            </div>
+            <div class="font-bold text-slate-950">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(g.valor)}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderizarDocumentos() {
+      const divFiltros = document.getElementById('filtro-placas');
+      let botoes = `
+        <button onclick="setFiltroPlaca('todos')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${placaFiltroAtual === 'todos' ? 'bg-slate-900 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+          <i data-lucide="files" class="w-3.5 h-3.5"></i> Todos
+        </button>
+      `;
+
+      veiculosCache.forEach(v => {
+        const ativo = placaFiltroAtual === v.id;
+        botoes += `
+          <button onclick="setFiltroPlaca('${v.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${ativo ? 'bg-slate-900 text-white shadow-sm' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}">
+            <i data-lucide="truck" class="w-3.5 h-3.5"></i>
+            <span class="bg-slate-100 text-slate-800 px-1 rounded text-[10px] font-mono">${v.placa || 'S/ Placa'}</span>
+            <span>${v.nome}</span>
+          </button>
+        `;
+      });
+
+      divFiltros.innerHTML = botoes;
+
+      let docsFiltrados = documentosCache;
+      if (placaFiltroAtual !== 'todos') {
+        docsFiltrados = documentosCache.filter(d => d.veiculo_id === placaFiltroAtual);
+      }
+
+      const grade = document.getElementById('grade-documentos');
+      if (docsFiltrados.length === 0) {
+        grade.innerHTML = '<div class="col-span-full bg-white p-12 text-center rounded-3xl border border-slate-200 text-slate-400 text-xs">Nenhum documento anexado para este filtro.</div>';
+      } else {
+        grade.innerHTML = docsFiltrados.map(d => `
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-3 shadow-sm">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-mono text-[10px] font-bold">
+                  <i data-lucide="tag" class="w-3 h-3"></i> ${d.veiculos?.placa || 'Geral'}
+                </span>
+                <h3 class="text-sm font-bold text-slate-950 mt-1">${d.titulo}</h3>
+                <p class="text-[11px] text-slate-400">${d.veiculos?.nome || 'Geral / Sem veículo'}</p>
+              </div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">${d.categoria}</span>
+            </div>
+            <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
+              <a href="${d.arquivo_url}" target="_blank" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Acessar Arquivo
+              </a>
+              <button onclick="excluirRegistro('documentos', '${d.id}')" class="text-red-500 hover:text-red-700">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function setFiltroPlaca(id) {
+      placaFiltroAtual = id;
+      renderizarDocumentos();
+      lucide.createIcons();
+    }
+
+    function renderizarGastos() {
+      const tabela = document.getElementById('tabela-gastos');
+      if (gastosCache.length === 0) {
+        tabela.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-slate-400">Nenhum gasto cadastrado.</td></tr>';
+      } else {
+        tabela.innerHTML = gastosCache.map(g => `
+          <tr class="hover:bg-slate-50/60 transition">
+            <td class="py-3 px-4 font-semibold text-slate-900">${g.descricao}</td>
+            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium">${g.categoria}</span></td>
+            <td class="py-3 px-4 text-slate-500">${g.data}</td>
+            <td class="py-3 px-4 text-slate-600">${g.fornecedor || '—'}</td>
+            <td class="py-3 px-4 text-slate-600">${g.veiculos?.nome || '—'}</td>
+            <td class="py-3 px-4 font-bold text-slate-950">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(g.valor)}</td>
+            <td class="py-3 px-4 text-right">
+              <button onclick="excluirRegistro('gastos', '${g.id}')" class="text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function renderizarManutencoes() {
+      const lista = document.getElementById('lista-manutencoes');
+      if (manutencoesCache.length === 0) {
+        lista.innerHTML = '<div class="col-span-full bg-white p-12 text-center rounded-3xl border border-slate-200 text-slate-400 text-xs">Nenhuma manutenção registrada.</div>';
+      } else {
+        lista.innerHTML = manutencoesCache.map(m => `
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-3 shadow-sm">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">${m.veiculos?.nome || 'Equipamento'} (${m.veiculos?.placa || 'S/ Placa'})</span>
+                <h3 class="text-sm font-bold text-slate-900 mt-0.5">${m.descricao_servico}</h3>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 pt-2 border-t border-slate-100">
+              <div><span class="text-slate-400">Data:</span> ${m.data_manutencao}</div>
+              <div><span class="text-slate-400">Horímetro:</span> ${m.km_horimetro}</div>
+              <div><span class="text-slate-400">Oficina:</span> ${m.oficina_fornecedor || '—'}</div>
+              <div><span class="text-slate-400">Valor:</span> <span class="font-bold text-slate-900">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(m.valor)}</span></div>
+            </div>
+            <div class="pt-2 flex justify-end">
+              <button onclick="excluirRegistro('manutencoes', '${m.id}')" class="text-red-500 hover:text-red-700 text-xs flex items-center gap-1 font-semibold">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderizarVeiculos() {
+      const lista = document.getElementById('lista-veiculos');
+      if (veiculosCache.length === 0) {
+        lista.innerHTML = '<div class="col-span-full bg-white p-12 text-center rounded-3xl border border-slate-200 text-slate-400 text-xs">Nenhum veículo cadastrado.</div>';
+      } else {
+        lista.innerHTML = veiculosCache.map(v => `
+          <div class="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-3 shadow-sm">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${v.tipo}</span>
+            <h3 class="text-base font-bold text-slate-950">${v.nome}</h3>
+            <p class="text-xs text-slate-400">${v.marca || ''} • ${v.modelo || ''} • Ano ${v.ano || 'n/i'}</p>
+            <div class="text-xs space-y-1 py-2 border-t border-slate-100 text-slate-600">
+              <div><span class="text-slate-400">Placa:</span> <span class="font-semibold text-slate-800">${v.placa || 'Sem placa'}</span></div>
+              <div><span class="text-slate-400">Horímetro / KM:</span> <span class="font-semibold text-slate-800">${v.km_horimetro_atual}</span></div>
+            </div>
+            <div class="pt-2 flex justify-end">
+              <button onclick="excluirRegistro('veiculos', '${v.id}')" class="text-red-500 hover:text-red-700 text-xs flex items-center gap-1 font-semibold">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Excluir
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    async function excluirRegistro(tabela, id) {
+      if (!confirm('Deseja excluir este registro?')) return;
+      await sbClient.from(tabela).delete().eq('id', id);
+      carregarTudoDoBanco();
+    }
+
+    function trocarAba(aba) {
+      ['dashboard', 'documentos', 'gastos', 'manutencoes', 'veiculos'].forEach(a => {
+        const el = document.getElementById('aba-' + a);
+        if (el) el.classList.add('hidden');
+        const btn = document.getElementById('btn-' + a);
+        if (btn) btn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition";
+      });
+
+      const abaAtiva = document.getElementById('aba-' + aba);
+      if (abaAtiva) abaAtiva.classList.remove('hidden');
+      const btnAtivo = document.getElementById('btn-' + aba);
+      if (btnAtivo) btnAtivo.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 transition";
+      lucide.createIcons();
+    }
+
+    function abrirModalVeiculo() {
+      document.getElementById('modal-titulo').innerText = "Cadastrar Veículo / Equipamento";
+      document.getElementById('modal-corpo').innerHTML = `
+        <form onsubmit="salvarVeiculo(event)" class="space-y-3">
+          <div><label class="text-[11px] font-semibold text-slate-600">Nome / Identificação</label><input id="v-nome" required class="input-padrao" placeholder="Ex: Guindaste Liebherr 70T"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] font-semibold text-slate-600">Tipo</label><select id="v-tipo" class="input-padrao"><option>Guindaste</option><option>Caminhão</option><option>Carro</option><option>Outro</option></select></div>
+            <div><label class="text-[11px] font-semibold text-slate-600">Placa</label><input id="v-placa" class="input-padrao" placeholder="ABC-1234"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] font-semibold text-slate-600">Marca</label><input id="v-marca" class="input-padrao" placeholder="Ex: Scania"></div>
+            <div><label class="text-[11px] font-semibold text-slate-600">KM/Horímetro Atual</label><input id="v-km" type="number" step="0.1" class="input-padrao" placeholder="0"></div>
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-xs mt-2">Salvar no Banco</button>
+        </form>
+      `;
+      abrirModal();
+    }
+
+    async function salvarVeiculo(e) {
+      e.preventDefault();
+      await sbClient.from('veiculos').insert({
+        user_id: usuarioAtual.id,
+        ambiente: ambienteAtual,
+        nome: document.getElementById('v-nome').value,
+        tipo: document.getElementById('v-tipo').value,
+        placa: document.getElementById('v-placa').value,
+        marca: document.getElementById('v-marca').value,
+        km_horimetro_atual: parseFloat(document.getElementById('v-km').value || 0)
+      });
+      fecharModal();
+      carregarTudoDoBanco();
+    }
+
+    function abrirModalGasto() {
+      document.getElementById('modal-titulo').innerText = "Novo Gasto";
+      let optionsVeic = '<option value="">Geral (Sem veículo)</option>';
+      veiculosCache.forEach(v => optionsVeic += `<option value="${v.id}">${v.nome} (${v.placa})</option>`);
+
+      document.getElementById('modal-corpo').innerHTML = `
+        <form onsubmit="salvarGasto(event)" class="space-y-3">
+          <div><label class="text-[11px] font-semibold text-slate-600">Descrição</label><input id="g-desc" required class="input-padrao" placeholder="Ex: Diesel S10"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] font-semibold text-slate-600">Valor (R$)</label><input id="g-val" required type="number" step="0.01" class="input-padrao" placeholder="0,00"></div>
+            <div><label class="text-[11px] font-semibold text-slate-600">Data</label><input id="g-data" required type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] font-semibold text-slate-600">Categoria</label><select id="g-cat" class="input-padrao"><option>Combustível</option><option>Manutenção</option><option>Peças</option><option>Pneus</option><option>Contas</option><option>Alimentação</option><option>Outros</option></select></div>
+            <div><label class="text-[11px] font-semibold text-slate-600">Veículo</label><select id="g-veic" class="input-padrao">${optionsVeic}</select></div>
+          </div>
+          <div><label class="text-[11px] font-semibold text-slate-600">Fornecedor</label><input id="g-forn" class="input-padrao" placeholder="Posto ou Estabelecimento"></div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-xs mt-2">Gravar Gasto</button>
+        </form>
+      `;
+      abrirModal();
+    }
+
+    async function salvarGasto(e) {
+      e.preventDefault();
+      await sbClient.from('gastos').insert({
+        user_id: usuarioAtual.id,
+        ambiente: ambienteAtual,
+        descricao: document.getElementById('g-desc').value,
+        valor: parseFloat(document.getElementById('g-val').value),
+        data: document.getElementById('g-data').value,
+        categoria: document.getElementById('g-cat').value,
+        veiculo_id: document.getElementById('g-veic').value || null,
+        fornecedor: document.getElementById('g-forn').value
+      });
+      fecharModal();
+      carregarTudoDoBanco();
+    }
+
+    function abrirModalManutencao() {
+      document.getElementById('modal-titulo').innerText = "Registrar Manutenção";
+      let optionsVeic = '';
+      veiculosCache.forEach(v => optionsVeic += `<option value="${v.id}">${v.nome} (${v.placa})</option>`);
+
+      document.getElementById('modal-corpo').innerHTML = `
+        <form onsubmit="salvarManutencao(event)" class="space-y-3">
+          <div><label class="text-[11px] font-semibold text-slate-600">Veículo / Equipamento</label><select id="m-veic" required class="input-padrao">${optionsVeic}</select></div>
+          <div><label class="text-[11px] font-semibold text-slate-600">Serviço Realizado</label><textarea id="m-desc" required rows="2" class="input-padrao" placeholder="Descrição do serviço..."></textarea></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] font-semibold text-slate-600">Data</label><input id="m-data" required type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
+            <div><label class="text-[11px] font-semibold text-slate-600">KM / Horímetro</label><input id="m-km" required type="number" step="0.1" class="input-padrao" placeholder="0"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] font-semibold text-slate-600">Valor (R$)</label><input id="m-val" type="number" step="0.01" class="input-padrao" placeholder="0,00"></div>
+            <div><label class="text-[11px] font-semibold text-slate-600">Oficina</label><input id="m-ofic" class="input-padrao" placeholder="Oficina"></div>
+          </div>
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-xs mt-2">Salvar Manutenção</button>
+        </form>
+      `;
+      abrirModal();
+    }
+
+    async function salvarManutencao(e) {
+      e.preventDefault();
+      const veiculoId = document.getElementById('m-veic').value;
+      const km = parseFloat(document.getElementById('m-km').value);
+
+      await sbClient.from('manutencoes').insert({
+        user_id: usuarioAtual.id,
+        ambiente: ambienteAtual,
+        veiculo_id: veiculoId,
+        descricao_servico: document.getElementById('m-desc').value,
+        data_manutencao: document.getElementById('m-data').value,
+        km_horimetro: km,
+        valor: parseFloat(document.getElementById('m-val').value || 0),
+        oficina_fornecedor: document.getElementById('m-ofic').value
+      });
+
+      if (km > 0) {
+        await sbClient.from('veiculos').update({ km_horimetro_atual: km }).eq('id', veiculoId);
+      }
+
+      fecharModal();
+      carregarTudoDoBanco();
+    }
+
+    function abrirModalDoc() {
+      document.getElementById('modal-titulo').innerText = "Anexar Documento ao Storage";
+      let optionsVeic = '<option value="">Geral / Sem placa</option>';
+      veiculosCache.forEach(v => optionsVeic += `<option value="${v.id}">${v.nome} (${v.placa})</option>`);
+
+      document.getElementById('modal-corpo').innerHTML = `
+        <form onsubmit="salvarDocumento(event)" class="space-y-3">
+          <div><label class="text-[11px] font-semibold text-slate-600">Título do Arquivo</label><input id="d-titulo" required class="input-padrao" placeholder="Ex: CRLV 2026 Guindaste 70T"></div>
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="text-[11px] font-semibold text-slate-600">Categoria</label><select id="d-cat" class="input-padrao"><option>CRLV / Documento</option><option>Laudo Técnico</option><option>Nota Fiscal</option><option>Contrato</option><option>Comprovante</option></select></div>
+            <div><label class="text-[11px] font-semibold text-slate-600">Placa / Equipamento</label><select id="d-veic" class="input-padrao">${optionsVeic}</select></div>
+          </div>
+          <div><label class="text-[11px] font-semibold text-slate-600">Arquivo (PDF, JPG, PNG)</label><input id="d-file" required type="file" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700"></div>
+          <button type="submit" id="btn-upload" class="w-full py-2.5 rounded-xl bg-blue-600 text-white font-semibold text-xs mt-2">Enviar ao Supabase Storage</button>
+        </form>
+      `;
+      abrirModal();
+    }
+
+    async function salvarDocumento(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById('d-file');
+      const file = fileInput.files[0];
+      if (!file) return alert('Selecione um arquivo.');
+
+      const btn = document.getElementById('btn-upload');
+      btn.innerText = "Enviando arquivo...";
+      btn.disabled = true;
+
+      try {
+        const ext = file.name.split('.').pop();
+        const filePath = `${usuarioAtual.id}/${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+
+        const { error: upErr } = await sbClient.storage.from('er_gestao_arquivos').upload(filePath, file);
+        if (upErr) throw upErr;
+
+        const { data: signData } = await sbClient.storage.from('er_gestao_arquivos').createSignedUrl(filePath, 31536000);
+
+        await sbClient.from('documentos').insert({
+          user_id: usuarioAtual.id,
+          ambiente: ambienteAtual,
+          veiculo_id: document.getElementById('d-veic').value || null,
+          titulo: document.getElementById('d-titulo').value,
+          categoria: document.getElementById('d-cat').value,
+          arquivo_url: signData.signedUrl,
+          arquivo_path: filePath
+        });
+
+        fecharModal();
+        carregarTudoDoBanco();
+      } catch (err) {
+        alert(`Erro no upload: ${err.message}`);
+      } finally {
+        btn.innerText = "Enviar ao Supabase Storage";
+        btn.disabled = false;
+      }
+    }
+
+    function abrirModal() {
+      document.getElementById('modal-container').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fecharModal() {
+      document.getElementById('modal-container').classList.add('hidden');
+    }
+  </script>
+</body>
+  </html>
