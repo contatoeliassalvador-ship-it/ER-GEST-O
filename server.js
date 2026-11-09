@@ -11,7 +11,7 @@ app.use(express.json());
 
 const SUPABASE_URL = "https://rlsjdmuufarfkjmyfanl.supabase.co";
 const SUPABASE_KEY = "sb_publishable_O2NXNhKiw5ism295beG6aA_-UNynzkG";
-const GEMINI_API_KEY = "AQ.Ab8RN6KMlcP7FNhYBlIQ_MuD9FjSyV7x8RM57HaVRSxpkmBPig";
+const GEMINI_API_KEY = "AQ.Ab8RN6IT2a4U_cM-H8C18vjRhOaUh-Q4oco6Hap6H1zs_DSasA";
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let sock = null, lastQrDataUrl = null, connectionStatus = "Desconectado - Gerando QR Code...", ultimoNumeroConectado = null;
