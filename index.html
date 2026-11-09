@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ER GESTÃO</title>
+  <title>ASSISTENTE ER · Central de registros</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/assistant.css">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Supabase JS Client Oficial -->
@@ -32,10 +35,11 @@
 <body class="bg-[#F8FAFC] text-slate-900 min-h-screen antialiased flex flex-col md:flex-row">
 
   <!-- ================= TELA DE LOGIN ESTILO NUBANK ================= -->
-  <div id="tela-login" class="fixed inset-0 bg-[#F8FAFC] z-50 flex items-center justify-center p-4">
+  <div id="tela-login" class="hidden fixed inset-0 bg-[#F8FAFC] z-50 flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-white border border-slate-200/90 rounded-3xl p-8 shadow-sm space-y-6">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-950">ER GESTÃO</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-950">Acesse o Assistente ER</h1>
+        <button type="button" onclick="document.getElementById('tela-login').classList.add('hidden')" class="login-close" aria-label="Fechar login">×</button>
         <p class="text-xs uppercase tracking-wider text-blue-600 font-semibold mt-1">
           Acesso Administrativo
         </p>
@@ -61,64 +65,62 @@
   </div>
 
   <!-- ================= BARRA LATERAL ================= -->
-  <aside class="hidden md:flex flex-col w-64 border-r border-slate-200 bg-white h-screen sticky top-0 justify-between p-5">
-    <div class="space-y-8">
-      <div>
-        <h1 class="text-xl font-bold tracking-tight text-slate-950">ER GESTÃO</h1>
-        <p class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-0.5">Controle Integrado</p>
-      </div>
-
-      <nav class="space-y-1">
-        <button onclick="trocarAba('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 transition">
-          <i data-lucide="layout-dashboard" class="w-4 h-4 text-blue-600"></i> Painel Geral
-        </button>
-        <button onclick="trocarAba('documentos')" id="btn-documentos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
-          <i data-lucide="folder-archive" class="w-4 h-4 text-slate-400"></i> Documentos por Placa
-        </button>
-        <button onclick="trocarAba('gastos')" id="btn-gastos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
-          <i data-lucide="receipt" class="w-4 h-4 text-slate-400"></i> Despesas & Gastos
-        </button>
-        <button onclick="trocarAba('manutencoes')" id="btn-manutencoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
-          <i data-lucide="wrench" class="w-4 h-4 text-slate-400"></i> Manutenções
-        </button>
-        <button onclick="trocarAba('veiculos')" id="btn-veiculos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition">
-          <i data-lucide="truck" class="w-4 h-4 text-slate-400"></i> Veículos & Máquinas
-        </button>
-      </nav>
-    </div>
-
-    <div class="pt-4 border-t border-slate-100">
-      <div id="user-display" class="text-[11px] text-slate-500 font-medium truncate mb-2"></div>
-      <button onclick="desconectar()" class="w-full flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-red-600 transition">
-        <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Desconectar
-      </button>
-    </div>
+  <aside class="er-sidebar">
+    <a href="#" onclick="trocarAba('chat');return false" class="er-brand" aria-label="Assistente ER, início"><span class="er-logo">ER<span>↗</span></span><span>ASSISTENTE <b>ER</b><small>GUINDASTES & OPERAÇÕES</small></span></a>
+    <button class="new-chat" onclick="novaConversa()"><i data-lucide="square-pen"></i> Nova conversa <span>+</span></button>
+    <p class="nav-label">ESPAÇO DE TRABALHO</p>
+    <nav aria-label="Navegação principal" class="er-nav">
+      <button onclick="trocarAba('chat')" id="btn-chat" class="er-nav-active"><i data-lucide="messages-square"></i> Assistente <span class="nav-dot"></span></button>
+      <button onclick="trocarAba('dashboard')" id="btn-dashboard"><i data-lucide="layout-dashboard"></i> Visão geral</button>
+      <button onclick="trocarAba('veiculos')" id="btn-veiculos"><i data-lucide="truck"></i> Frota e equipamentos</button>
+      <button onclick="trocarAba('gastos')" id="btn-gastos"><i data-lucide="receipt-text"></i> Despesas e registros</button>
+      <button onclick="trocarAba('manutencoes')" id="btn-manutencoes"><i data-lucide="wrench"></i> Manutenções</button>
+      <button onclick="trocarAba('documentos')" id="btn-documentos"><i data-lucide="folder-open"></i> Documentos</button>
+    </nav>
+    <div class="sidebar-note"><span class="tiny-square"></span><span>Do primeiro registro<br>à próxima operação.</span><i data-lucide="arrow-up-right"></i></div>
+    <div class="sidebar-bottom"><div class="private-label"><i data-lucide="shield-check"></i> Ambiente administrativo</div><button onclick="acessarConta()" class="account-button"><span class="account-avatar">ER</span><span><strong id="user-display">Administrador</strong><small id="account-caption">Entrar na sua conta</small></span><i data-lucide="chevrons-up-down"></i></button></div>
   </aside>
 
   <!-- ================= PAINEL PRINCIPAL ================= -->
   <main class="flex-1 flex flex-col min-w-0">
     
     <!-- SELETOR ESTILO NUBANK -->
-    <header class="bg-white border-b border-slate-200 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Contexto:</span>
-        <span id="label-ambiente" class="text-xs font-bold text-slate-900">EMPRESA — ER GUINDASTES</span>
-      </div>
-
-      <div class="inline-flex bg-slate-100 p-1 rounded-2xl">
-        <button id="toggle-empresa" onclick="alternarAmbiente('empresa')" class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-sm transition">
-          <i data-lucide="building-2" class="w-3.5 h-3.5"></i> EMPRESA (ER GUINDASTES)
-        </button>
-        <button id="toggle-pf" onclick="alternarAmbiente('pessoa_fisica')" class="flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
-          <i data-lucide="user" class="w-3.5 h-3.5"></i> PESSOA FÍSICA
-        </button>
-      </div>
+    <header class="workspace-header">
+      <div class="header-title"><span class="header-breadcrumb">ESPAÇO DE TRABALHO</span><span class="header-divider">/</span><strong id="workspace-name">Assistente</strong></div>
+      <div class="header-actions"><div class="scope-picker"><button class="workspace-scope" onclick="document.getElementById('scope-menu').classList.toggle('hidden')" aria-label="Selecionar ambiente"><span class="scope-dot"></span><span id="label-ambiente">ER Guindastes</span><i data-lucide="chevron-down"></i></button><div id="scope-menu" class="scope-menu hidden"><button id="toggle-empresa" onclick="alternarAmbiente('empresa');document.getElementById('scope-menu').classList.add('hidden')">Empresa · ER Guindastes</button><button id="toggle-pf" onclick="alternarAmbiente('pessoa_fisica');document.getElementById('scope-menu').classList.add('hidden')">Pessoa física</button></div></div><button onclick="trocarAba('documentos')" aria-label="Abrir documentos" class="header-icon"><i data-lucide="folder-open"></i></button><button onclick="acessarConta()" class="header-avatar" aria-label="Conta do administrador">ER</button></div>
     </header>
+    <nav class="mobile-nav" aria-label="Navegação móvel"><button onclick="trocarAba('chat')">Chat</button><button onclick="trocarAba('dashboard')">Painel</button><button onclick="trocarAba('veiculos')">Frota</button><button onclick="trocarAba('gastos')">Despesas</button><button onclick="trocarAba('manutencoes')">Manutenção</button><button onclick="trocarAba('documentos')">Documentos</button></nav>
 
     <div class="p-6 md:p-8 max-w-7xl w-full mx-auto space-y-6">
 
+      <section id="aba-chat" class="er-chat-section" aria-label="Chat do Assistente ER">
+        <div class="chat-topline"><div><span class="mini-brand"><span></span> SEU ASSISTENTE ADMINISTRATIVO</span></div><button onclick="mostrarCapacidades()" class="text-button"><i data-lucide="circle-help"></i> O que posso fazer?</button></div>
+        <div id="chat-welcome" class="chat-welcome">
+          <div class="assistant-emblem"><i data-lucide="sparkles"></i><span class="emblem-corner"></span></div>
+          <span class="welcome-eyebrow">MENOS BUROCRACIA. MAIS OPERAÇÃO.</span>
+          <h1>O que vamos<br>organizar <span>hoje?</span></h1>
+          <p>Frota, despesas e documentos em uma conversa.<br>Seu próximo registro começa por aqui.</p>
+          <div class="starter-grid">
+            <button onclick="prepararMensagem('Quero registrar um abastecimento')"><span class="starter-icon"><i data-lucide="fuel"></i></span><strong>Registrar abastecimento</strong><span>Combustível e dados do veículo</span><i class="card-arrow" data-lucide="arrow-up-right"></i></button>
+            <button onclick="prepararMensagem('Quero registrar uma despesa')"><span class="starter-icon"><i data-lucide="receipt-text"></i></span><strong>Lançar uma despesa</strong><span>Organize os gastos da operação</span><i class="card-arrow" data-lucide="arrow-up-right"></i></button>
+            <button onclick="prepararMensagem('Quero registrar uma manutenção')"><span class="starter-icon"><i data-lucide="wrench"></i></span><strong>Cuidar da frota</strong><span>Serviços e manutenções</span><i class="card-arrow" data-lucide="arrow-up-right"></i></button>
+            <button onclick="prepararMensagem('Quanto gastamos este mês?')"><span class="starter-icon"><i data-lucide="chart-no-axes-combined"></i></span><strong>Consultar os gastos</strong><span>Acompanhe os registros financeiros</span><i class="card-arrow" data-lucide="arrow-up-right"></i></button>
+          </div>
+          <div class="suggestion-line"><span>Experimente</span><button onclick="prepararMensagem('Liste os veículos cadastrados')">“Liste os veículos cadastrados” <i data-lucide="arrow-up-right"></i></button></div>
+        </div>
+        <div id="chat-messages" class="chat-messages hidden" role="log" aria-label="Mensagens da conversa" aria-live="polite" aria-relevant="additions"></div>
+        <div class="composer-area">
+          <div id="chat-action-tray" class="chat-action-tray hidden"><button onclick="abrirRegistroChat('gasto')"><i data-lucide="receipt-text"></i> Despesa</button><button onclick="abrirRegistroChat('manutencao')"><i data-lucide="wrench"></i> Manutenção</button><button onclick="abrirRegistroChat('documento')"><i data-lucide="paperclip"></i> Documento</button><button onclick="abrirRegistroChat('veiculo')"><i data-lucide="truck"></i> Veículo</button></div>
+          <form id="chat-form" class="chat-composer" onsubmit="enviarChat(event)">
+            <label class="sr-only" for="chat-input">Sua mensagem para o Assistente ER</label><textarea id="chat-input" rows="1" maxlength="12000" placeholder="Peça uma consulta ou comece um novo registro…" oninput="ajustarComposer(this)"></textarea>
+            <div class="composer-toolbar"><div><button type="button" class="composer-add" onclick="alternarAtalhos()" aria-label="Abrir atalhos de registros" aria-expanded="false" id="composer-add"><i data-lucide="plus"></i></button><span class="composer-context"><i data-lucide="building-2"></i> ER Guindastes</span></div><button type="submit" id="chat-send" class="chat-send" aria-label="Enviar mensagem"><i data-lucide="arrow-up"></i></button></div>
+          </form>
+          <div class="composer-caption"><span><i data-lucide="lock-keyhole"></i> Acesso administrativo</span><span>Confira os dados antes de confirmar um registro.</span></div>
+        </div>
+      </section>
+
       <!-- ABA: DASHBOARD -->
-      <section id="aba-dashboard" class="space-y-6">
+      <section id="aba-dashboard" class="space-y-6 hidden">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="bg-white border border-slate-200/80 rounded-3xl p-5 shadow-sm">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Gastos no Mês</div>
@@ -297,12 +299,18 @@
     function posLogin() {
       document.getElementById('tela-login').classList.add('hidden');
       document.getElementById('user-display').innerText = usuarioAtual.email;
+      document.getElementById('account-caption').textContent = 'Conta conectada · Sair';
       carregarTudoDoBanco();
     }
 
     async function desconectar() {
       await sbClient.auth.signOut();
       usuarioAtual = null;
+      veiculosCache = []; gastosCache = []; manutencoesCache = []; documentosCache = [];
+      renderizarDashboard(); renderizarVeiculos(); renderizarGastos(); renderizarManutencoes(); renderizarDocumentos();
+      limparConversa();
+      document.getElementById('user-display').textContent = 'Administrador';
+      document.getElementById('account-caption').textContent = 'Entrar na sua conta';
       document.getElementById('tela-login').classList.remove('hidden');
     }
 
@@ -314,15 +322,17 @@
       const btnPF = document.getElementById('toggle-pf');
 
       if (amb === 'empresa') {
-        btnEmpresa.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-sm transition";
-        btnPF.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
-        document.getElementById('label-ambiente').innerText = "EMPRESA — ER GUINDASTES";
+        btnEmpresa.className = amb === "empresa" ? "scope-selected" : "";
+        btnPF.className = amb === "pessoa_fisica" ? "scope-selected" : "";
+        document.getElementById('label-ambiente').innerText = 'ER Guindastes';
       } else {
-        btnPF.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 text-white shadow-sm transition";
-        btnEmpresa.className = "flex items-center gap-2 px-4 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
-        document.getElementById('label-ambiente').innerText = "PESSOA FÍSICA";
+        btnPF.className = amb === "pessoa_fisica" ? "scope-selected" : "";
+        btnEmpresa.className = amb === "empresa" ? "scope-selected" : "";
+        document.getElementById('label-ambiente').innerText = 'Pessoa física';
       }
 
+      limparConversa();
+      document.querySelector('.composer-context').lastChild.textContent = amb === 'empresa' ? ' ER Guindastes' : ' Pessoa física';
       carregarTudoDoBanco();
     }
 
@@ -532,17 +542,19 @@
     }
 
     function trocarAba(aba) {
-      ['dashboard', 'documentos', 'gastos', 'manutencoes', 'veiculos'].forEach(a => {
+      ['chat', 'dashboard', 'documentos', 'gastos', 'manutencoes', 'veiculos'].forEach(a => {
         const el = document.getElementById('aba-' + a);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById('btn-' + a);
-        if (btn) btn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-50 transition";
+        if (btn) btn.className = "";
       });
 
       const abaAtiva = document.getElementById('aba-' + aba);
       if (abaAtiva) abaAtiva.classList.remove('hidden');
       const btnAtivo = document.getElementById('btn-' + aba);
-      if (btnAtivo) btnAtivo.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-blue-50 text-blue-700 transition";
+      if (btnAtivo) btnAtivo.className = "er-nav-active";
+      document.getElementById('workspace-name').textContent = ({chat:'Assistente',dashboard:'Visão geral',documentos:'Documentos',gastos:'Despesas e registros',manutencoes:'Manutenções',veiculos:'Frota e equipamentos'})[aba] || 'Assistente';
+      document.querySelector('main > div').classList.toggle('chat-workspace', aba === 'chat');
       lucide.createIcons();
     }
 
@@ -733,5 +745,6 @@
       document.getElementById('modal-container').classList.add('hidden');
     }
   </script>
+  <script src="/assets/chat.js"></script>
 </body>
 </html>

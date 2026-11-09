@@ -26,9 +26,10 @@ function fixture({ calls = [], text = '', rows = [], dbError = false, responseEr
   };
   const db = { from: name => { seen.table = name; return query; } };
   const noop = () => {};
-  const app = { use: noop, get: noop };
+  const app = { use: noop, get: noop, post: noop };
   const express = () => app;
   express.json = noop;
+  express.static = noop;
   const dependencies = {
     express, '@supabase/supabase-js': { createClient: () => db },
     pino: noop, qrcode: {}, '@whiskeysockets/baileys': {},
@@ -40,11 +41,12 @@ function fixture({ calls = [], text = '', rows = [], dbError = false, responseEr
     './lib/assistant-core': core
   };
   const context = { require: name => {
+    if (name === 'node:path') return require('node:path');
     if (!(name in dependencies)) throw new Error('Unexpected dependency');
     return dependencies[name];
   }, module: { exports: {} }, process: { env: {
     SUPABASE_URL: 'https://example.invalid', SUPABASE_KEY: 'fixture', ADMIN_USER_ID: 'fixture-admin', ADMIN_PHONE: admin
-  } }, console: { log: noop, error: noop }, setTimeout: noop, Buffer, Date, Intl, Set };
+  } }, console: { log: noop, error: noop }, setTimeout: noop, Buffer, Date, Intl, Set, __dirname: require('node:path').resolve(__dirname, '..') };
   vm.runInNewContext(fs.readFileSync(require.resolve('../server'), 'utf8'), context);
   return { ...context.module.exports, seen };
 }

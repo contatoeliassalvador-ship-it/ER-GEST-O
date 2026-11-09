@@ -503,6 +503,31 @@ async function connectToWhatsApp() {
   }
 }
 
+app.use('/assets', express.static(require('node:path').join(__dirname, 'assets')));
+app.post('/api/chat', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const match = /^Bearer (.+)$/.exec(req.headers.authorization || '');
+  if (!match) return res.status(401).json({ error: 'Entre na conta administrativa.' });
+  if (!supabase || !process.env.ADMIN_USER_ID || !process.env.ADMIN_PHONE) {
+    return res.status(503).json({ error: 'Atendimento inteligente indisponível nesta conexão.' });
+  }
+  try {
+    const { data, error } = await supabase.auth.getUser(match[1]);
+    if (error || data.user?.id !== process.env.ADMIN_USER_ID) return res.status(403).json({ error: 'Acesso não autorizado.' });
+    if (typeof req.body?.message !== 'string' || !req.body.message.trim() || req.body.message.length > 12000) {
+      return res.status(400).json({ error: 'Envie uma mensagem de até 12.000 caracteres.' });
+    }
+    const ambiente = req.body.ambiente || 'empresa';
+    if (!['empresa', 'pessoa_fisica'].includes(ambiente)) return res.status(400).json({ error: 'Ambiente inválido.' });
+    const phone = String(process.env.ADMIN_PHONE).replace(/\D/g, '');
+    const texto = `Ambiente selecionado pelo administrador: ${ambiente}.\nSolicitação: ${req.body.message}`;
+    const reply = await processarMensagemAssistente(texto, `${phone}@s.whatsapp.net`);
+    res.json({ reply });
+  } catch {
+    res.status(503).json({ error: 'Não foi possível concluir a consulta. Nenhum registro foi realizado.' });
+  }
+});
+
 app.get('/health', (_req, res) => res.json({ service: 'ASSISTENTE ER', status: 'online', writesEnabled: false }));
 app.get('/api/whatsapp/status', async (req, res) => {
   res.set('Cache-Control', 'no-store');
