@@ -1,8 +1,3 @@
-const express = require('express');
-const path = require('path');
-const pino = require('pino');
-const qrcode = require('qrcode');
-const { createClient } = require('@supabase/supabase-js');
 const { 
   default: makeWASocket, 
   useMultiFileAuthState, 
