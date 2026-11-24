@@ -8,551 +8,333 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    .input-padrao {
-      width: 100%;
-      padding: 0.65rem 0.85rem;
-      font-size: 0.85rem;
-      border-radius: 0.75rem;
-      border: 1px solid #E2E8F0;
-      background-color: #FFFFFF;
-      color: #0F172A;
-      outline: none;
-      transition: all 0.2s;
-    }
-    .input-padrao:focus {
-      border-color: #E06A3B;
-      box-shadow: 0 0 0 2px rgba(224, 106, 59, 0.2);
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .input-padrao { width: 100%; padding: 0.65rem 0.85rem; font-size: 0.85rem; border-radius: 0.75rem; border: 1px solid #E2E8F0; background: #FFF; outline: none; }
+    .input-padrao:focus { border-color: #E06A3B; box-shadow: 0 0 0 2px rgba(224, 106, 59, 0.2); }
   </style>
 </head>
-<body class="bg-[#FBFBFA] text-slate-900 min-h-screen antialiased flex flex-col md:flex-row relative overflow-x-hidden">
+<body class="bg-[#FBFBFA] text-slate-900 min-h-screen flex flex-col md:flex-row relative">
 
   <!-- ================= TELA DE LOGIN ================= -->
   <div id="tela-login" class="fixed inset-0 bg-[#FBFBFA] z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-sm bg-white border border-stone-200 rounded-3xl p-8 shadow-sm space-y-6">
+    <div class="w-full max-w-sm bg-white border border-stone-200 rounded-3xl p-8 shadow-sm space-y-5">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-[#E06A3B] text-white flex items-center justify-center font-bold text-sm shadow-xs">
-          ER
-        </div>
+        <div class="w-10 h-10 rounded-xl bg-[#E06A3B] text-white flex items-center justify-center font-bold text-sm shadow-xs">ER</div>
         <div>
-          <h1 class="text-base font-bold tracking-tight text-stone-900">ASSISTENTE ER</h1>
+          <h1 class="text-base font-bold text-stone-900">ASSISTENTE ER</h1>
           <p class="text-[10px] uppercase tracking-widest text-stone-400 font-semibold">GUINDASTES & OPERAÇÕES</p>
         </div>
       </div>
 
       <div id="erro-login" class="hidden p-3 rounded-xl bg-red-50 text-red-700 text-xs font-medium border border-red-200"></div>
 
-      <form id="form-auth" onsubmit="realizarLogin(event)" class="space-y-4">
+      <div class="space-y-4">
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">E-mail</label>
-          <input type="email" id="auth-email" required class="input-padrao" placeholder="seu@email.com">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-1">E-mail</label>
+          <input type="email" id="auth-email" autocapitalize="none" autocorrect="off" class="input-padrao" placeholder="seu@email.com">
         </div>
         <div>
-          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-1.5">Senha</label>
-          <input type="password" id="auth-senha" required class="input-padrao" placeholder="••••••••">
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-stone-500 mb-1">Senha</label>
+          <input type="password" id="auth-senha" class="input-padrao" placeholder="••••••••">
         </div>
-        <button type="submit" id="btn-entrar" class="w-full py-3 rounded-xl bg-[#1C1E1D] hover:bg-stone-800 text-white font-semibold text-xs transition shadow-sm">
+        <button type="button" onclick="realizarLogin()" id="btn-entrar" class="w-full py-3 rounded-xl bg-[#1C1E1D] hover:bg-stone-800 text-white font-semibold text-xs shadow-sm transition">
           Entrar no Sistema
         </button>
-      </form>
+      </div>
     </div>
   </div>
 
-  <!-- ================= BARRA SUPERIOR PARA CELULAR (STICKY) ================= -->
-  <div class="md:hidden bg-[#1C1E1D] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30 border-b border-stone-800 shadow-sm">
+  <!-- BARRA SUPERIOR MOBILE -->
+  <div class="md:hidden bg-[#1C1E1D] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30 border-b border-stone-800">
     <div class="flex items-center gap-2.5">
-      <button onclick="abrirBarraLateral()" class="p-1.5 rounded-xl bg-stone-800/80 text-stone-200 hover:bg-stone-700 border border-stone-700/60 active:scale-95 transition">
-        <i data-lucide="menu" class="w-5 h-5"></i>
-      </button>
-      <div class="w-7 h-7 rounded-lg bg-[#E06A3B] text-white flex items-center justify-center font-bold text-[10px] shadow-xs">
-        ER
-      </div>
+      <button onclick="abrirBarraLateral()" class="p-1.5 rounded-xl bg-stone-800 text-stone-200"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      <div class="w-7 h-7 rounded-lg bg-[#E06A3B] text-white flex items-center justify-center font-bold text-[10px]">ER</div>
       <span class="text-xs font-bold tracking-wider">ASSISTENTE <span class="text-[#E06A3B]">ER</span></span>
     </div>
-
-    <div class="relative">
-      <button onclick="alternarContextoDrop()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-stone-700/80 bg-stone-800/80 text-[11px] font-semibold text-stone-200">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-        <span id="label-ambiente-mobile">ER Guindastes</span>
-        <i data-lucide="chevron-down" class="w-3 h-3 text-stone-400"></i>
-      </button>
-    </div>
+    <button onclick="alternarContextoDrop()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-stone-700 bg-stone-800 text-[11px] font-semibold text-stone-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+      <span id="label-ambiente-mobile">ER Guindastes</span>
+      <i data-lucide="chevron-down" class="w-3 h-3 text-stone-400"></i>
+    </button>
   </div>
 
-  <!-- BACKDROP MOBILE -->
-  <div id="backdrop-lateral" onclick="fecharBarraLateral()" class="fixed inset-0 bg-stone-950/60 backdrop-blur-xs z-40 hidden md:hidden transition-opacity"></div>
+  <div id="backdrop-lateral" onclick="fecharBarraLateral()" class="fixed inset-0 bg-stone-950/60 backdrop-blur-xs z-40 hidden md:hidden"></div>
 
-  <!-- ================= BARRA LATERAL ESCURA ================= -->
-  <aside id="barra-lateral" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#1C1E1D] text-stone-300 h-screen select-none border-r border-stone-800 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 shadow-2xl md:shadow-none">
-    
+  <!-- BARRA LATERAL ESCURA -->
+  <aside id="barra-lateral" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#1C1E1D] text-stone-300 h-screen select-none border-r border-stone-800 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 flex flex-col justify-between p-5">
     <div class="space-y-6">
       <div class="flex items-center justify-between px-1">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-[#E06A3B] text-white flex items-center justify-center font-bold text-xs tracking-wider shadow-sm">
-            ER
-          </div>
+          <div class="w-9 h-9 rounded-xl bg-[#E06A3B] text-white flex items-center justify-center font-bold text-xs shadow-sm">ER</div>
           <div>
-            <h1 class="text-xs font-bold text-white tracking-wider">ASSISTENTE <span class="text-[#E06A3B]">ER</span></h1>
-            <p class="text-[9px] uppercase tracking-widest text-stone-400 font-medium">GUINDASTES & OPERAÇÕES</p>
+            <h1 class="text-xs font-bold text-white">ASSISTENTE <span class="text-[#E06A3B]">ER</span></h1>
+            <p class="text-[9px] uppercase tracking-widest text-stone-400">GUINDASTES & OPERAÇÕES</p>
           </div>
         </div>
-        <button onclick="fecharBarraLateral()" class="md:hidden text-stone-400 hover:text-white p-1 rounded-lg">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
+        <button onclick="fecharBarraLateral()" class="md:hidden text-stone-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
       <button onclick="trocarAbaMobile('assistente')" class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold text-stone-200 border border-stone-700/60 hover:bg-stone-800/80 transition">
-        <div class="flex items-center gap-2">
-          <i data-lucide="edit-3" class="w-3.5 h-3.5 text-stone-400"></i>
-          <span>Nova conversa</span>
-        </div>
+        <div class="flex items-center gap-2"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-stone-400"></i><span>Nova conversa</span></div>
         <span class="text-stone-500 text-sm font-light">+</span>
       </button>
 
       <div class="space-y-1">
         <span class="text-[9px] font-bold uppercase tracking-widest text-stone-500 px-3">Espaço de Trabalho</span>
-        
-        <button onclick="trocarAbaMobile('assistente')" id="btn-assistente" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#2A2C2B] text-white transition">
-          <div class="flex items-center gap-3">
-            <i data-lucide="message-square" class="w-4 h-4 text-stone-400"></i>
-            <span>Assistente</span>
-          </div>
+        <button onclick="trocarAbaMobile('assistente')" id="btn-assistente" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#2A2C2B] text-white">
+          <div class="flex items-center gap-3"><i data-lucide="message-square" class="w-4 h-4 text-stone-400"></i><span>Assistente</span></div>
           <span class="w-1.5 h-1.5 rounded-full bg-[#E06A3B]"></span>
         </button>
-
-        <button onclick="trocarAbaMobile('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
-          <i data-lucide="layout-grid" class="w-4 h-4"></i>
-          <span>Visão geral</span>
+        <button onclick="trocarAbaMobile('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i><span>Visão geral</span>
         </button>
-
-        <button onclick="trocarAbaMobile('manutencoes')" id="btn-manutencoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
-          <i data-lucide="wrench" class="w-4 h-4"></i>
-          <span>Manutenções & Fotos</span>
+        <button onclick="trocarAbaMobile('manutencoes')" id="btn-manutencoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50">
+          <i data-lucide="wrench" class="w-4 h-4"></i><span>Manutenções & Fotos</span>
         </button>
-
-        <button onclick="trocarAbaMobile('gastos')" id="btn-gastos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
-          <i data-lucide="receipt" class="w-4 h-4"></i>
-          <span>Despesas e registros</span>
+        <button onclick="trocarAbaMobile('gastos')" id="btn-gastos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50">
+          <i data-lucide="receipt" class="w-4 h-4"></i><span>Despesas e registros</span>
         </button>
-
-        <button onclick="trocarAbaMobile('veiculos')" id="btn-veiculos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
-          <i data-lucide="truck" class="w-4 h-4"></i>
-          <span>Frota e equipamentos</span>
+        <button onclick="trocarAbaMobile('veiculos')" id="btn-veiculos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50">
+          <i data-lucide="truck" class="w-4 h-4"></i><span>Frota e equipamentos</span>
         </button>
-
-        <button onclick="trocarAbaMobile('documentos')" id="btn-documentos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
-          <i data-lucide="folder" class="w-4 h-4"></i>
-          <span>Documentos por placa</span>
+        <button onclick="trocarAbaMobile('documentos')" id="btn-documentos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50">
+          <i data-lucide="folder" class="w-4 h-4"></i><span>Documentos</span>
         </button>
       </div>
-
     </div>
 
-    <div class="pt-4 border-t border-stone-800 space-y-3">
-      <div class="px-2 text-[10px] text-stone-400 flex items-center justify-between">
-        <span class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#E06A3B]"></span> Do primeiro registro à próxima operação.
-        </span>
-        <i data-lucide="arrow-up-right" class="w-3 h-3 text-stone-500"></i>
-      </div>
-
-      <div class="pt-1 flex items-center justify-between px-1">
-        <div class="flex items-center gap-2.5">
-          <div class="w-7 h-7 rounded-full bg-stone-700 text-stone-300 flex items-center justify-center font-bold text-[10px]">
-            ER
-          </div>
-          <div>
-            <div class="text-[11px] font-bold text-white">Administrador</div>
-            <div id="user-display" class="text-[9px] text-stone-500 truncate max-w-[110px]">Conectado</div>
-          </div>
+    <div class="pt-4 border-t border-stone-800 flex items-center justify-between px-1">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-full bg-stone-700 text-stone-300 flex items-center justify-center font-bold text-[10px]">ER</div>
+        <div>
+          <div class="text-[11px] font-bold text-white">Administrador</div>
+          <div id="user-display" class="text-[9px] text-stone-500 truncate max-w-[100px]">Conectado</div>
         </div>
-        <button onclick="desconectar()" class="text-stone-500 hover:text-red-400 transition p-1">
-          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-        </button>
       </div>
+      <button onclick="desconectar()" class="text-stone-500 hover:text-red-400 p-1"><i data-lucide="log-out" class="w-3.5 h-3.5"></i></button>
     </div>
   </aside>
 
   <!-- ================= CONTEÚDO PRINCIPAL ================= -->
   <main class="flex-1 flex flex-col min-w-0">
-    
-    <!-- BARRA SUPERIOR DESKTOP -->
-    <header class="hidden md:flex bg-white/80 backdrop-blur-sm border-b border-stone-200/80 px-6 py-3.5 items-center justify-between">
+    <header class="hidden md:flex bg-white/80 border-b border-stone-200/80 px-6 py-3.5 items-center justify-between">
       <div class="flex items-center gap-2 text-xs font-medium text-stone-400">
-        <span class="uppercase tracking-wider text-[10px] font-semibold text-stone-400">Espaço de trabalho</span>
+        <span class="uppercase tracking-wider text-[10px] font-semibold">Espaço de trabalho</span>
         <span>/</span>
         <span id="breadcrumb-aba" class="text-stone-900 font-semibold">Assistente</span>
       </div>
-
-      <div class="flex items-center gap-3">
-        <div class="relative">
-          <button onclick="alternarContextoDrop()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-xs font-semibold text-stone-800 transition shadow-2xs">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span id="label-ambiente">ER Guindastes</span>
-            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400"></i>
-          </button>
-        </div>
-
-        <button onclick="trocarAba('documentos')" class="p-1.5 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition">
-          <i data-lucide="folder" class="w-4 h-4"></i>
-        </button>
-        <div class="w-7 h-7 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center font-bold text-[10px]">
-          ER
-        </div>
-      </div>
+      <button onclick="alternarContextoDrop()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-stone-200 bg-white text-xs font-semibold text-stone-800 shadow-2xs">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span id="label-ambiente">ER Guindastes</span>
+        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-stone-400"></i>
+      </button>
     </header>
 
-    <!-- DROPDOWN FLUTUANTE DE AMBIENTE -->
-    <div id="drop-ambiente" class="hidden fixed top-14 right-4 md:right-16 w-52 bg-white border border-stone-200 rounded-2xl shadow-xl py-1.5 z-50 text-xs">
-      <button onclick="selecionarAmbiente('empresa')" class="w-full text-left px-3.5 py-2.5 hover:bg-stone-50 font-semibold text-stone-800 flex items-center justify-between">
-        <span>ER Guindastes</span>
-        <span class="text-[9px] text-stone-400 uppercase font-mono bg-stone-100 px-1.5 py-0.5 rounded">Empresa</span>
+    <div id="drop-ambiente" class="hidden fixed top-14 right-4 md:right-8 w-48 bg-white border border-stone-200 rounded-2xl shadow-xl py-1 z-50 text-xs">
+      <button onclick="selecionarAmbiente('empresa')" class="w-full text-left px-3.5 py-2 hover:bg-stone-50 font-semibold flex items-center justify-between">
+        <span>ER Guindastes</span><span class="text-[9px] bg-stone-100 px-1 rounded">Empresa</span>
       </button>
-      <button onclick="selecionarAmbiente('pessoa_fisica')" class="w-full text-left px-3.5 py-2.5 hover:bg-stone-50 font-semibold text-stone-800 flex items-center justify-between border-t border-stone-100">
-        <span>Pessoa Física</span>
-        <span class="text-[9px] text-stone-400 uppercase font-mono bg-stone-100 px-1.5 py-0.5 rounded">Pessoal</span>
+      <button onclick="selecionarAmbiente('pessoa_fisica')" class="w-full text-left px-3.5 py-2 hover:bg-stone-50 font-semibold flex items-center justify-between border-t border-stone-100">
+        <span>Pessoa Física</span><span class="text-[9px] bg-stone-100 px-1 rounded">Pessoal</span>
       </button>
     </div>
 
-    <!-- ÁREA CENTRAL -->
     <div class="flex-1 p-4 sm:p-6 md:p-12 max-w-5xl w-full mx-auto">
 
-      <!-- ================= 1. ABA ASSISTENTE (SEM O CARD DE ABASTECIMENTO) ================= -->
-      <section id="aba-assistente" class="space-y-6 md:space-y-8 animate-fade-in">
-        
+      <!-- ABA 1: ASSISTENTE (TELA EXATA DO PRINT) -->
+      <section id="aba-assistente" class="space-y-6 md:space-y-8">
         <div class="flex items-center justify-between text-[11px] text-stone-400">
-          <span class="flex items-center gap-1.5 font-bold uppercase tracking-wider text-stone-500">
+          <span class="font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> Seu assistente administrativo
           </span>
-          <button onclick="alert('Dica: Você pode lançar despesas, manutenções com fotos e consultar dados da operação.')" class="hover:text-stone-700 flex items-center gap-1">
-            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> O que posso fazer?
-          </button>
+          <span class="text-stone-400">ER Guindastes</span>
         </div>
 
-        <div class="space-y-3 md:space-y-4 pt-2 md:pt-4">
-          <div class="w-11 h-11 md:w-12 md:h-12 rounded-2xl bg-stone-100 flex items-center justify-center relative shadow-2xs border border-stone-200/60">
+        <div class="space-y-3 pt-2">
+          <div class="w-11 h-11 rounded-2xl bg-stone-100 flex items-center justify-center relative border border-stone-200">
             <i data-lucide="sparkles" class="w-5 h-5 text-stone-700"></i>
-            <span class="w-2 h-2 rounded-full bg-[#E06A3B] absolute -bottom-0.5 -right-0.5 border border-white"></span>
+            <span class="w-2 h-2 rounded-full bg-[#E06A3B] absolute -bottom-0.5 -right-0.5"></span>
           </div>
-
-          <p class="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-stone-400">MENOS BUROCRACIA. MAIS OPERAÇÃO.</p>
-
+          <p class="text-[9px] font-bold uppercase tracking-widest text-stone-400">MENOS BUROCRACIA. MAIS OPERAÇÃO.</p>
           <h2 class="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-stone-900 leading-[1.15]">
-            O que vamos<br>
-            <span class="text-stone-400 font-light italic">organizar</span> <span class="text-stone-500 font-normal">hoje?</span>
+            O que vamos<br><span class="text-stone-400 font-light italic">organizar</span> <span class="text-stone-500 font-normal">hoje?</span>
           </h2>
-
-          <p class="text-xs text-stone-500 max-w-md leading-relaxed">
-            Frota, despesas e documentos organizados.<br class="hidden sm:inline">
-            Seu próximo registro começa por aqui.
-          </p>
+          <p class="text-xs text-stone-500 max-w-md">Frota, despesas e documentos organizados. Seu próximo registro começa por aqui.</p>
         </div>
 
-        <!-- 3 CARDS EXECUTIVOS LIMPOS (SEM ABASTECIMENTO) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 pt-1 md:pt-2">
-          
-          <!-- Card 1: Lançar Despesa -->
-          <button onclick="abrirModalGasto()" class="p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
+        <!-- 3 CARDS EXECUTIVOS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 pt-2">
+          <button onclick="abrirModalGasto()" class="p-5 bg-white border border-stone-200 rounded-2xl text-left hover:border-stone-400 transition shadow-2xs group">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
-                <i data-lucide="receipt" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B] transition"></i>
+                <i data-lucide="receipt" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B]"></i>
                 <div>
                   <h3 class="text-xs font-bold text-stone-900">Lançar uma despesa</h3>
-                  <p class="text-[11px] text-stone-400 mt-0.5">Organize os gastos e compras</p>
+                  <p class="text-[11px] text-stone-400 mt-0.5">Gastos e compras da operação</p>
                 </div>
               </div>
-              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800 transition"></i>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800"></i>
             </div>
           </button>
 
-          <!-- Card 2: Cuidar da Frota (Manutenções com Fotos e PDFs) -->
-          <button onclick="abrirModalManutencao()" class="p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
+          <button onclick="abrirModalManutencao()" class="p-5 bg-white border border-stone-200 rounded-2xl text-left hover:border-stone-400 transition shadow-2xs group">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
-                <i data-lucide="wrench" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B] transition"></i>
+                <i data-lucide="wrench" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B]"></i>
                 <div>
                   <h3 class="text-xs font-bold text-stone-900">Cuidar da frota</h3>
-                  <p class="text-[11px] text-stone-400 mt-0.5">Serviços, peças, fotos e notas</p>
+                  <p class="text-[11px] text-stone-400 mt-0.5">Serviços com fotos e notas</p>
                 </div>
               </div>
-              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800 transition"></i>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800"></i>
             </div>
           </button>
 
-          <!-- Card 3: Consultar Gastos -->
-          <button onclick="trocarAba('dashboard')" class="p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
+          <button onclick="trocarAba('dashboard')" class="p-5 bg-white border border-stone-200 rounded-2xl text-left hover:border-stone-400 transition shadow-2xs group">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
-                <i data-lucide="trending-up" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B] transition"></i>
+                <i data-lucide="trending-up" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B]"></i>
                 <div>
                   <h3 class="text-xs font-bold text-stone-900">Consultar os gastos</h3>
                   <p class="text-[11px] text-stone-400 mt-0.5">Acompanhe os custos do mês</p>
                 </div>
               </div>
-              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800 transition"></i>
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800"></i>
             </div>
           </button>
-
         </div>
-
-        <div class="pt-2 text-xs text-stone-400 flex items-center gap-2">
-          <span>Experimente</span>
-          <button onclick="trocarAba('veiculos')" class="text-stone-700 font-semibold hover:underline flex items-center gap-1">
-            "Ver veículos cadastrados" <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
-          </button>
-        </div>
-
       </section>
 
-      <!-- ================= 2. ABA VISÃO GERAL ================= -->
+      <!-- ABA 2: VISÃO GERAL -->
       <section id="aba-dashboard" class="space-y-6 hidden">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div class="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-2xs">
-            <div class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Gastos no Mês</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="bg-white border border-stone-200 rounded-2xl p-5 shadow-2xs">
+            <div class="text-[10px] font-bold text-stone-400 uppercase">Gastos no Mês</div>
             <div id="kpi-gastos" class="text-2xl font-bold text-stone-900 mt-2">R$ 0,00</div>
-            <div id="kpi-ambiente-sub" class="text-[11px] text-stone-400 mt-1">Ambiente atual</div>
           </div>
-          <div class="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-2xs">
-            <div class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">Manutenções Registradas</div>
+          <div class="bg-white border border-stone-200 rounded-2xl p-5 shadow-2xs">
+            <div class="text-[10px] font-bold text-stone-400 uppercase">Manutenções Registradas</div>
             <div id="kpi-manutencoes" class="text-2xl font-bold text-stone-900 mt-2">0</div>
-            <div class="text-[11px] text-stone-400 mt-1">Histórico completo</div>
           </div>
-          <div class="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-2xs">
-            <div class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Próximas (15 dias)</div>
+          <div class="bg-white border border-stone-200 rounded-2xl p-5 shadow-2xs">
+            <div class="text-[10px] font-bold text-amber-600 uppercase">Próximas (15 dias)</div>
             <div id="kpi-proximas" class="text-2xl font-bold text-amber-600 mt-2">0</div>
-            <div class="text-[11px] text-stone-400 mt-1">Revisões agendadas</div>
           </div>
-          <div class="bg-white border border-stone-200/80 rounded-2xl p-5 shadow-2xs">
-            <div class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Atrasadas</div>
+          <div class="bg-white border border-stone-200 rounded-2xl p-5 shadow-2xs">
+            <div class="text-[10px] font-bold text-red-600 uppercase">Atrasadas</div>
             <div id="kpi-atrasadas" class="text-2xl font-bold text-red-600 mt-2">0</div>
-            <div class="text-[11px] text-stone-400 mt-1">Requerem atenção</div>
           </div>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="bg-white border border-stone-200/80 rounded-2xl p-6 shadow-2xs">
-            <h3 class="text-xs font-bold text-stone-900 uppercase tracking-wider mb-4">Gastos por Categoria</h3>
-            <div id="categorias-lista" class="space-y-3 text-xs text-stone-400">Nenhum gasto registrado.</div>
-          </div>
-          <div class="lg:col-span-2 bg-white border border-stone-200/80 rounded-2xl p-6 shadow-2xs">
-            <h3 class="text-xs font-bold text-stone-900 uppercase tracking-wider mb-4">Últimos Lançamentos</h3>
-            <div id="ultimos-gastos-lista" class="divide-y divide-stone-100 text-xs text-stone-400">Nenhum lançamento.</div>
-          </div>
+        <div class="bg-white border border-stone-200 rounded-2xl p-5 shadow-2xs">
+          <h3 class="text-xs font-bold text-stone-900 uppercase mb-3">Últimos Lançamentos</h3>
+          <div id="ultimos-gastos-lista" class="divide-y divide-stone-100 text-xs"></div>
         </div>
       </section>
 
-      <!-- ================= 3. ABA MANUTENÇÕES (COM ABERTURA PERFEITA DE FOTOS E PDFS) ================= -->
-      <section id="aba-manutencoes" class="space-y-5 hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="text-lg font-bold text-stone-900">Manutenções & Histórico</h2>
-            <p class="text-xs text-stone-400">Toque nas fotos ou nos PDFs para abrir e visualizar os comprovantes.</p>
-          </div>
-          <button onclick="abrirModalManutencao()" class="px-4 py-2 bg-[#1C1E1D] hover:bg-stone-800 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-xs w-fit">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Registrar Manutenção
-          </button>
+      <!-- ABA 3: MANUTENÇÕES COM GALERIA DE FOTOS E PDF -->
+      <section id="aba-manutencoes" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div><h2 class="text-lg font-bold text-stone-900">Manutenções & Histórico</h2><p class="text-xs text-stone-400">Toque nas fotos ou PDFs para visualizar.</p></div>
+          <button onclick="abrirModalManutencao()" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">+ Nova Manutenção</button>
         </div>
         <div id="lista-manutencoes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </section>
 
-      <!-- ================= 4. ABA DESPESAS & CATEGORIAS ================= -->
-      <section id="aba-gastos" class="space-y-5 hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="text-lg font-bold text-stone-900">Despesas & Registros</h2>
-            <p class="text-xs text-stone-400">Controle financeiro detalhado por tópicos.</p>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="abrirModalNovaCategoria()" class="px-3 py-2 bg-white border border-stone-200 text-xs font-semibold rounded-xl text-stone-700 hover:bg-stone-50 transition">
-              + Categoria
-            </button>
-            <button onclick="abrirModalGasto()" class="px-3 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl hover:bg-stone-800 transition">
-              + Novo Gasto
-            </button>
-          </div>
+      <!-- ABA 4: GASTOS -->
+      <section id="aba-gastos" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <div><h2 class="text-lg font-bold text-stone-900">Despesas & Registros</h2><p class="text-xs text-stone-400">Controle financeiro por tópicos.</p></div>
+          <button onclick="abrirModalGasto()" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">+ Novo Gasto</button>
         </div>
-        <div id="grade-topicos-categorias" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3"></div>
-        <div class="bg-white border border-stone-200/90 rounded-2xl overflow-hidden shadow-2xs">
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs min-w-[500px]">
-              <thead class="bg-stone-50 border-b border-stone-200 text-stone-500 font-bold uppercase tracking-wider">
-                <tr>
-                  <th class="py-3 px-4">Descrição</th>
-                  <th class="py-3 px-4">Tópico</th>
-                  <th class="py-3 px-4">Data</th>
-                  <th class="py-3 px-4">Local</th>
-                  <th class="py-3 px-4">Valor</th>
-                  <th class="py-3 px-4 text-right">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="tabela-gastos" class="divide-y divide-stone-100"></tbody>
-            </table>
-          </div>
+        <div id="grade-topicos-categorias" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+        <div class="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-2xs">
+          <table class="w-full text-left text-xs min-w-[500px]">
+            <thead class="bg-stone-50 border-b border-stone-200 text-stone-500 font-bold uppercase">
+              <tr><th class="p-3">Descrição</th><th class="p-3">Tópico</th><th class="p-3">Data</th><th class="p-3">Valor</th><th class="p-3 text-right">Ação</th></tr>
+            </thead>
+            <tbody id="tabela-gastos" class="divide-y divide-stone-100"></tbody>
+          </table>
         </div>
       </section>
 
-      <!-- ================= 5. ABA VEÍCULOS & FROTA ================= -->
-      <section id="aba-veiculos" class="space-y-5 hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="text-lg font-bold text-stone-900">Frota e Equipamentos</h2>
-            <p class="text-xs text-stone-400">Guindastes, caminhões munck e veículos cadastrados.</p>
-          </div>
-          <button onclick="abrirModalVeiculo()" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl hover:bg-stone-800 transition flex items-center gap-1.5 w-fit">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Cadastrar Veículo
-          </button>
+      <!-- ABA 5: VEÍCULOS -->
+      <section id="aba-veiculos" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-stone-900">Frota e Equipamentos</h2>
+          <button onclick="abrirModalVeiculo()" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">+ Cadastrar Veículo</button>
         </div>
-        <div id="lista-veiculos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+        <div id="lista-veiculos" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
       </section>
 
-      <!-- ================= 6. ABA DOCUMENTOS POR PLACA ================= -->
-      <section id="aba-documentos" class="space-y-5 hidden">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="text-lg font-bold text-stone-900">Central de Documentos</h2>
-            <p class="text-xs text-stone-400">Porta-luvas digital filtrado pela placa de cada equipamento.</p>
-          </div>
-          <button onclick="abrirModalDoc()" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl hover:bg-stone-800 transition flex items-center gap-1.5 w-fit">
-            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Enviar Arquivo
-          </button>
+      <!-- ABA 6: DOCUMENTOS -->
+      <section id="aba-documentos" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-stone-900">Documentos por Placa</h2>
+          <button onclick="abrirModalDoc()" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">Enviar Arquivo</button>
         </div>
         <div id="filtro-placas" class="flex flex-wrap gap-2"></div>
-        <div id="grade-documentos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        <div id="grade-documentos" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
       </section>
 
     </div>
   </main>
 
-  <!-- ================= MODAL DE FOTO EM TELA CHEIA (BLINDADO) ================= -->
+  <!-- MODAL VISUALIZADOR DE FOTOS -->
   <div id="modal-foto-viewer" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white rounded-3xl p-5 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 id="foto-viewer-titulo" class="text-xs font-bold text-stone-900 truncate">Foto da Peça / Serviço</h3>
-        <button onclick="fecharFotoViewer()" class="text-stone-400 hover:text-stone-700 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+    <div class="bg-white rounded-3xl p-5 max-w-xl w-full max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h3 id="foto-viewer-titulo" class="text-xs font-bold text-stone-900 truncate">Foto do Anexo</h3>
+        <button onclick="fecharFotoViewer()" class="text-stone-400 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
-      <div class="flex justify-center bg-stone-100 rounded-2xl p-2 overflow-hidden">
-        <img id="foto-viewer-img" src="" alt="Anexo" class="max-h-[60vh] object-contain rounded-xl shadow-xs" />
-      </div>
-      <div class="flex justify-between items-center pt-2">
-        <span class="text-[11px] text-stone-400">Toque em baixar para salvar no seu dispositivo.</span>
-        <a id="foto-viewer-download" href="" target="_blank" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl hover:bg-stone-800 flex items-center gap-1.5">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar Arquivo
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= MODAL DE FICHA COMPLETA DA MANUTENÇÃO ================= -->
-  <div id="modal-ficha-manutencao" class="fixed inset-0 bg-stone-950/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white rounded-3xl p-6 max-w-xl w-full max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl">
-      <div class="flex items-center justify-between border-b pb-3">
-        <div>
-          <span id="ficha-veiculo" class="text-[10px] font-bold uppercase tracking-wider text-stone-400"></span>
-          <h3 id="ficha-servico" class="text-sm font-bold text-stone-900 mt-0.5"></h3>
-        </div>
-        <button onclick="fecharFichaManutencao()" class="text-stone-400 hover:text-stone-700 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3 text-xs bg-stone-50 p-3.5 rounded-2xl border border-stone-200/80">
-        <div><span class="text-stone-400 block">Data do Serviço:</span> <span id="ficha-data" class="font-semibold text-stone-800"></span></div>
-        <div><span class="text-stone-400 block">Horímetro / KM:</span> <span id="ficha-km" class="font-semibold text-stone-800"></span></div>
-        <div><span class="text-stone-400 block">Oficina / Prestador:</span> <span id="ficha-oficina" class="font-semibold text-stone-800"></span></div>
-        <div><span class="text-stone-400 block">Valor Pago:</span> <span id="ficha-valor" class="font-bold text-stone-950"></span></div>
-      </div>
-
-      <div class="space-y-2">
-        <h4 class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-          <i data-lucide="paperclip" class="w-3.5 h-3.5 text-[#E06A3B]"></i> Fotos e Documentos Anexados
-        </h4>
-        <div id="ficha-anexos-galeria" class="space-y-2"></div>
-      </div>
+      <div class="flex justify-center bg-stone-100 rounded-2xl p-2"><img id="foto-viewer-img" src="" class="max-h-[55vh] object-contain rounded-xl" /></div>
+      <div class="flex justify-end"><a id="foto-viewer-download" href="" target="_blank" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">Baixar Arquivo</a></div>
     </div>
   </div>
 
   <!-- MODAL UNIVERSAL -->
   <div id="modal-container" class="fixed inset-0 bg-stone-950/40 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-    <div class="bg-white rounded-3xl border border-stone-200 shadow-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between pb-3 border-b border-stone-100">
+    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b pb-2">
         <h3 id="modal-titulo" class="text-sm font-bold text-stone-950">Registro</h3>
-        <button onclick="fecharModal()" class="text-stone-400 hover:text-stone-700"><i data-lucide="x" class="w-4 h-4"></i></button>
+        <button onclick="fecharModal()" class="text-stone-400"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div id="modal-corpo"></div>
     </div>
   </div>
 
   <script>
-    // ================= CONFIGURAÇÃO DO SUPABASE =================
     const SUPABASE_URL = "https://rlsjdmuufarfkjmyfanl.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_O2NXNhKiw5ism295beG6aA_-UNynzkG";
 
     const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let usuarioAtual = null;
-    let ambienteAtual = 'empresa';
-    let placaFiltroAtual = 'todos';
-    let categoriaFiltroAtual = 'todas';
-
-    let veiculosCache = [];
-    let gastosCache = [];
-    let manutencoesCache = [];
-    let documentosCache = [];
-
-    // MAPA SEGURO DE ANEXOS NA MEMÓRIA (EVITA ERRO DE CLIQUE COM CARACTERES ESPECIAIS)
+    let usuarioAtual = null, ambienteAtual = 'empresa', placaFiltroAtual = 'todos', categoriaFiltroAtual = 'todas';
+    let veiculosCache = [], gastosCache = [], manutencoesCache = [], documentosCache = [];
     window.anexosMemoria = {};
 
-    const CATEGORIAS_BASE_PF = ['Combustível', 'Supermercado', 'Restaurante', 'Loja', 'Contas', 'Saúde', 'Outros'];
-    const CATEGORIAS_BASE_EMPRESA = ['Combustível', 'Manutenção', 'Peças', 'Pneus', 'Impostos', 'Contas', 'Serviços', 'Outros'];
-
-    function abrirBarraLateral() {
-      document.getElementById('barra-lateral').classList.remove('-translate-x-full');
-      document.getElementById('backdrop-lateral').classList.remove('hidden');
-    }
-
-    function fecharBarraLateral() {
-      document.getElementById('barra-lateral').classList.add('-translate-x-full');
-      document.getElementById('backdrop-lateral').classList.add('hidden');
-    }
-
-    function trocarAbaMobile(aba) {
-      fecharBarraLateral();
-      trocarAba(aba);
-    }
-
-    function obterCategoriasAtuais() {
-      const storageKey = ambienteAtual === 'pessoa_fisica' ? 'er_custom_cats_pf' : 'er_custom_cats_empresa';
-      const salvas = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      const base = ambienteAtual === 'pessoa_fisica' ? CATEGORIAS_BASE_PF : CATEGORIAS_BASE_EMPRESA;
-      return [...new Set([...base, ...salvas])];
-    }
-
-    function salvarNovaCategoria(novaCat) {
-      if (!novaCat || !novaCat.trim()) return;
-      const catLimpa = novaCat.trim();
-      const storageKey = ambienteAtual === 'pessoa_fisica' ? 'er_custom_cats_pf' : 'er_custom_cats_empresa';
-      const salvas = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      if (!salvas.includes(catLimpa)) {
-        salvas.push(catLimpa);
-        localStorage.setItem(storageKey, JSON.stringify(salvas));
-      }
-    }
+    function abrirBarraLateral() { document.getElementById('barra-lateral').classList.remove('-translate-x-full'); document.getElementById('backdrop-lateral').classList.remove('hidden'); }
+    function fecharBarraLateral() { document.getElementById('barra-lateral').classList.add('-translate-x-full'); document.getElementById('backdrop-lateral').classList.add('hidden'); }
+    function trocarAbaMobile(aba) { fecharBarraLateral(); trocarAba(aba); }
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       sbClient.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          usuarioAtual = session.user;
-          posLogin();
-        }
+        if (session) { usuarioAtual = session.user; posLogin(); }
       });
     });
 
-    async function realizarLogin(e) {
-      e.preventDefault();
+    async function realizarLogin() {
       const erroDiv = document.getElementById('erro-login');
       erroDiv.classList.add('hidden');
       const email = document.getElementById('auth-email').value.trim();
       const password = document.getElementById('auth-senha').value.trim();
+      const btn = document.getElementById('btn-entrar');
+      btn.innerText = "Entrando...";
+      btn.disabled = true;
+
       const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+      btn.innerText = "Entrar no Sistema";
+      btn.disabled = false;
+
       if (error) {
         erroDiv.innerText = `Erro: ${error.message}`;
         erroDiv.classList.remove('hidden');
@@ -574,336 +356,150 @@
       document.getElementById('tela-login').classList.remove('hidden');
     }
 
-    function alternarContextoDrop() {
-      document.getElementById('drop-ambiente').classList.toggle('hidden');
-    }
-
+    function alternarContextoDrop() { document.getElementById('drop-ambiente').classList.toggle('hidden'); }
     function selecionarAmbiente(amb) {
       ambienteAtual = amb;
-      placaFiltroAtual = 'todos';
-      categoriaFiltroAtual = 'todas';
-      const nomeAmbiente = amb === 'empresa' ? 'ER Guindastes' : 'Pessoa Física';
-      document.getElementById('label-ambiente').innerText = nomeAmbiente;
-      document.getElementById('label-ambiente-mobile').innerText = nomeAmbiente;
+      const nome = amb === 'empresa' ? 'ER Guindastes' : 'Pessoa Física';
+      document.getElementById('label-ambiente').innerText = nome;
+      document.getElementById('label-ambiente-mobile').innerText = nome;
       document.getElementById('drop-ambiente').classList.add('hidden');
       carregarTudoDoBanco();
     }
 
     async function carregarTudoDoBanco() {
       if (!usuarioAtual) return;
-
       try {
         const { data: vData } = await sbClient.from('veiculos').select('*').eq('ambiente', ambienteAtual).order('nome');
         veiculosCache = vData || [];
-
-        const { data: gData } = await sbClient.from('gastos').select('*, veiculos(nome, placa)').eq('ambiente', ambienteAtual).order('data', { ascending: false });
+        const { data: gData } = await sbClient.from('gastos').select('*').eq('ambiente', ambienteAtual).order('data', { ascending: false });
         gastosCache = gData || [];
-
         const { data: mData } = await sbClient.from('manutencoes').select('*, veiculos(nome, placa)').eq('ambiente', ambienteAtual).order('data_manutencao', { ascending: false });
         manutencoesCache = mData || [];
-
         const { data: dData } = await sbClient.from('documentos').select('*, veiculos(nome, placa)').eq('ambiente', ambienteAtual).order('created_at', { ascending: false });
         documentosCache = dData || [];
 
         renderizarDashboard();
-        renderizarDocumentos();
-        renderizarGastos();
         renderizarManutencoes();
+        renderizarGastos();
         renderizarVeiculos();
+        renderizarDocumentos();
         lucide.createIcons();
-      } catch (err) {
-        console.error(err);
-      }
+      } catch (err) { console.error(err); }
     }
 
     function renderizarDashboard() {
-      const totalGastos = gastosCache.reduce((acc, g) => acc + Number(g.valor), 0);
-      document.getElementById('kpi-gastos').innerText = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalGastos);
+      const total = gastosCache.reduce((acc, g) => acc + Number(g.valor), 0);
+      document.getElementById('kpi-gastos').innerText = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total);
       document.getElementById('kpi-manutencoes').innerText = manutencoesCache.length;
 
-      let atrasadas = 0, proximas = 0;
-      const hoje = new Date();
+      let atrasadas = 0, proximas = 0, hoje = new Date();
       manutencoesCache.forEach(m => {
         if (m.proxima_data) {
-          const dif = Math.ceil((new Date(m.proxima_data) - hoje) / (1000 * 60 * 60 * 24));
-          if (dif < 0) atrasadas++;
-          else if (dif <= 15) proximas++;
+          const dif = Math.ceil((new Date(m.proxima_data) - hoje) / 86400000);
+          if (dif < 0) atrasadas++; else if (dif <= 15) proximas++;
         }
       });
-
       document.getElementById('kpi-proximas').innerText = proximas;
       document.getElementById('kpi-atrasadas').innerText = atrasadas;
 
-      const catsMap = {};
-      gastosCache.forEach(g => { catsMap[g.categoria] = (catsMap[g.categoria] || 0) + Number(g.valor); });
-
-      const divCats = document.getElementById('categorias-lista');
-      if (Object.keys(catsMap).length === 0) {
-        divCats.innerHTML = '<div class="text-stone-400">Nenhum gasto registrado.</div>';
-      } else {
-        divCats.innerHTML = Object.entries(catsMap).map(([c, val]) => `
-          <div class="space-y-1">
-            <div class="flex justify-between text-xs">
-              <span class="font-medium text-stone-700">${c}</span>
-              <span class="font-bold text-stone-900">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)}</span>
-            </div>
-            <div class="w-full bg-stone-100 rounded-full h-1.5 overflow-hidden">
-              <div class="bg-stone-800 h-1.5 rounded-full" style="width: ${Math.min(100, (val / (totalGastos || 1)) * 100)}%"></div>
-            </div>
-          </div>
-        `).join('');
-      }
-
       const ultimos = gastosCache.slice(0, 5);
-      const divUltimos = document.getElementById('ultimos-gastos-lista');
-      if (ultimos.length === 0) {
-        divUltimos.innerHTML = '<div class="py-4 text-center text-stone-400">Nenhum gasto registrado.</div>';
-      } else {
-        divUltimos.innerHTML = ultimos.map(g => `
-          <div class="py-2.5 flex items-center justify-between text-xs">
-            <div>
-              <div class="font-semibold text-stone-800">${g.descricao}</div>
-              <div class="text-stone-400 text-[11px]">${g.data} • ${g.categoria}</div>
-            </div>
-            <span class="font-bold text-stone-950">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(g.valor)}</span>
-          </div>
-        `).join('');
-      }
+      document.getElementById('ultimos-gastos-lista').innerHTML = ultimos.map(g => `
+        <div class="py-2 flex justify-between"><div><b>${g.descricao}</b><div class="text-[10px] text-stone-400">${g.data} • ${g.categoria}</div></div><b>${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(g.valor)}</b></div>
+      `).join('') || '<div class="py-4 text-center text-stone-400">Nenhum gasto.</div>';
     }
 
-    // ================= MANUTENÇÕES COM ABERTURA DE FOTOS E PDFS GARANTIDA =================
     function renderizarManutencoes() {
       const lista = document.getElementById('lista-manutencoes');
-      if (manutencoesCache.length === 0) {
-        lista.innerHTML = '<div class="col-span-full bg-white p-12 text-center rounded-2xl border border-stone-200 text-stone-400 text-xs">Nenhuma manutenção registrada.</div>';
-        return;
-      }
-
+      if (manutencoesCache.length === 0) { lista.innerHTML = '<div class="col-span-full bg-white p-8 rounded-2xl border text-center text-stone-400 text-xs">Nenhuma manutenção registrada.</div>'; return; }
       window.anexosMemoria = {};
 
       lista.innerHTML = manutencoesCache.map(m => {
         let anexos = [];
         const raw = m.comprovante_url || m.arquivo_url;
-        if (raw) {
-          try {
-            anexos = JSON.parse(raw);
-            if (!Array.isArray(anexos)) anexos = [{ nome: 'Anexo', url: raw, tipo: 'image' }];
-          } catch (e) {
-            anexos = [{ nome: 'Foto / Comprovante', url: raw, tipo: 'image' }];
-          }
-        }
-
-        // Guarda os anexos na memória indexados pelo ID da manutenção
+        if (raw) { try { anexos = JSON.parse(raw); if (!Array.isArray(anexos)) anexos = [{ nome: 'Foto', url: raw, tipo: 'image' }]; } catch(e) { anexos = [{ nome: 'Foto', url: raw, tipo: 'image' }]; } }
         window.anexosMemoria[m.id] = anexos;
 
-        let galeriaHTML = '';
-        if (anexos.length > 0) {
-          galeriaHTML = `
-            <div class="pt-3 border-t border-stone-100 space-y-2">
-              <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                <span class="flex items-center gap-1">
-                  <i data-lucide="paperclip" class="w-3 h-3 text-[#E06A3B]"></i> Anexos (${anexos.length})
-                </span>
-                <button onclick="abrirFichaManutencao('${m.id}')" class="text-[#E06A3B] hover:underline flex items-center gap-0.5">
-                  Ver Ficha & Fotos <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                </button>
-              </div>
-
-              <div class="flex flex-wrap gap-2 pt-0.5">
-                ${anexos.map((a, idx) => {
-                  const isPdf = a.tipo === 'pdf' || (a.nome && a.nome.toLowerCase().endsWith('.pdf')) || a.url.toLowerCase().includes('.pdf');
-                  if (isPdf) {
-                    return `
-                      <button onclick="abrirAnexoDireto('${m.id}', ${idx})" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[11px] font-semibold text-red-700 border border-red-200/80 transition">
-                        <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
-                        <span class="truncate max-w-[130px]">${a.nome || 'Visualizar PDF'}</span>
-                      </button>
-                    `;
-                  } else {
-                    return `
-                      <div class="relative group cursor-pointer" onclick="abrirAnexoDireto('${m.id}', ${idx})">
-                        <img src="${a.url}" alt="${a.nome}" 
-                             class="w-14 h-14 object-cover rounded-xl border border-stone-200 group-hover:border-stone-800 transition shadow-2xs" />
-                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent rounded-xl flex items-center justify-center transition">
-                          <i data-lucide="zoom-in" class="w-3.5 h-3.5 text-white drop-shadow-sm"></i>
-                        </div>
-                      </div>
-                    `;
-                  }
-                }).join('')}
-              </div>
-            </div>
-          `;
-        }
-
         return `
-          <div class="bg-white border border-stone-200/90 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs hover:border-stone-400 transition">
+          <div class="bg-white border border-stone-200 rounded-2xl p-4 space-y-3 shadow-2xs">
             <div class="flex justify-between items-start">
-              <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">${m.veiculos?.nome || 'Equipamento'} (${m.veiculos?.placa || 'S/P'})</span>
-                <h3 class="text-sm font-bold text-stone-900 mt-0.5">${m.descricao_servico}</h3>
-              </div>
-              <div class="flex items-center gap-1">
-                <button onclick="abrirFichaManutencao('${m.id}')" title="Ver detalhes completos" class="text-stone-400 hover:text-stone-700 p-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button>
-                <button onclick="excluirRegistro('manutencoes', '${m.id}')" class="text-stone-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-              </div>
+              <div><span class="text-[10px] font-bold text-stone-400 uppercase">${m.veiculos?.nome || 'Veículo'} (${m.veiculos?.placa || 'S/P'})</span><h3 class="text-sm font-bold text-stone-900">${m.descricao_servico}</h3></div>
+              <button onclick="excluirRegistro('manutencoes', '${m.id}')" class="text-stone-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
             </div>
-            <div class="grid grid-cols-2 gap-2 text-xs text-stone-600 pt-2 border-t border-stone-100">
-              <div><span class="text-stone-400">Data:</span> ${m.data_manutencao}</div>
-              <div><span class="text-stone-400">Horímetro:</span> ${m.km_horimetro}</div>
-              <div><span class="text-stone-400">Oficina:</span> ${m.oficina_fornecedor || '—'}</div>
-              <div><span class="text-stone-400">Valor:</span> <span class="font-bold text-stone-950">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(m.valor)}</span></div>
+            <div class="grid grid-cols-2 gap-2 text-xs text-stone-600 pt-2 border-t">
+              <div>Data: ${m.data_manutencao}</div><div>KM: ${m.km_horimetro}</div><div>Oficina: ${m.oficina_fornecedor || '—'}</div>
+              <div>Valor: <b>${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(m.valor)}</b></div>
             </div>
-            ${galeriaHTML}
+            ${anexos.length > 0 ? `
+              <div class="pt-2 border-t flex flex-wrap gap-2">
+                ${anexos.map((a, idx) => a.tipo === 'pdf' ? `
+                  <button onclick="abrirAnexo('${m.id}', ${idx})" class="px-2.5 py-1.5 bg-red-50 text-red-700 rounded-xl text-[10px] font-semibold border border-red-200">📄 Abrir PDF</button>
+                ` : `
+                  <img src="${a.url}" onclick="abrirAnexo('${m.id}', ${idx})" class="w-12 h-12 object-cover rounded-xl border hover:opacity-80 cursor-pointer" />
+                `).join('')}
+              </div>
+            ` : ''}
           </div>
         `;
       }).join('');
     }
 
-    // Abertura Direta e Segura de Qualquer Anexo (Foto ou PDF)
-    function abrirAnexoDireto(mId, idx) {
-      const anexos = window.anexosMemoria[mId];
-      if (!anexos || !anexos[idx]) return alert('Arquivo não encontrado.');
-      const a = anexos[idx];
-
-      const isPdf = a.tipo === 'pdf' || (a.nome && a.nome.toLowerCase().endsWith('.pdf')) || a.url.toLowerCase().includes('.pdf');
-
-      if (isPdf) {
-        // Abre o PDF em nova aba sem travar o navegador
-        window.open(a.url, '_blank');
-      } else {
-        // Abre foto em modal de tela cheia
-        abrirFotoViewer(a.url, a.nome);
+    function abrirAnexo(mId, idx) {
+      const a = window.anexosMemoria[mId]?.[idx];
+      if (!a) return;
+      if (a.tipo === 'pdf' || a.url.toLowerCase().includes('.pdf')) { window.open(a.url, '_blank'); }
+      else {
+        document.getElementById('foto-viewer-titulo').innerText = a.nome || 'Foto';
+        document.getElementById('foto-viewer-img').src = a.url;
+        document.getElementById('foto-viewer-download').href = a.url;
+        document.getElementById('modal-foto-viewer').classList.remove('hidden');
+        lucide.createIcons();
       }
     }
+    function fecharFotoViewer() { document.getElementById('modal-foto-viewer').classList.add('hidden'); }
 
-    function abrirFotoViewer(url, titulo) {
-      document.getElementById('foto-viewer-titulo').innerText = titulo || 'Visualização do Anexo';
-      document.getElementById('foto-viewer-img').src = url;
-      document.getElementById('foto-viewer-download').href = url;
-      document.getElementById('modal-foto-viewer').classList.remove('hidden');
-      lucide.createIcons();
-    }
-
-    function fecharFotoViewer() {
-      document.getElementById('modal-foto-viewer').classList.add('hidden');
-    }
-
-    // Modal de Ficha Completa
-    function abrirFichaManutencao(id) {
-      const m = manutencoesCache.find(item => item.id === id);
-      if (!m) return;
-
-      document.getElementById('ficha-veiculo').innerText = `${m.veiculos?.nome || 'Veículo'} (${m.veiculos?.placa || 'Sem Placa'})`;
-      document.getElementById('ficha-servico').innerText = m.descricao_servico;
-      document.getElementById('ficha-data').innerText = m.data_manutencao;
-      document.getElementById('ficha-km').innerText = m.km_horimetro;
-      document.getElementById('ficha-oficina').innerText = m.oficina_fornecedor || 'Não informada';
-      document.getElementById('ficha-valor').innerText = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(m.valor);
-
-      const anexos = window.anexosMemoria[m.id] || [];
-      const divGaleria = document.getElementById('ficha-anexos-galeria');
-
-      if (anexos.length === 0) {
-        divGaleria.innerHTML = '<p class="text-xs text-stone-400 py-3 text-center">Nenhuma foto ou nota fiscal anexada a esta manutenção.</p>';
-      } else {
-        divGaleria.innerHTML = anexos.map((a, idx) => {
-          const isPdf = a.tipo === 'pdf' || (a.nome && a.nome.toLowerCase().endsWith('.pdf')) || a.url.toLowerCase().includes('.pdf');
-          if (isPdf) {
-            return `
-              <div class="flex items-center justify-between p-3 bg-stone-50 border border-stone-200 rounded-2xl">
-                <div class="flex items-center gap-2 text-xs font-semibold text-stone-800">
-                  <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
-                  <span class="truncate max-w-[250px]">${a.nome || 'Documento PDF'}</span>
-                </div>
-                <a href="${a.url}" target="_blank" class="px-3 py-1.5 bg-[#1C1E1D] text-white text-[11px] font-semibold rounded-xl hover:bg-stone-800 transition">
-                  Abrir PDF
-                </a>
-              </div>
-            `;
-          } else {
-            return `
-              <div class="flex items-center justify-between p-2.5 bg-stone-50 border border-stone-200 rounded-2xl">
-                <div class="flex items-center gap-3">
-                  <img src="${a.url}" class="w-12 h-12 object-cover rounded-xl border border-stone-200" />
-                  <span class="text-xs font-semibold text-stone-800 truncate max-w-[200px]">${a.nome || 'Foto'}</span>
-                </div>
-                <button onclick="abrirFotoViewer('${a.url}', '${a.nome}')" class="px-3 py-1.5 bg-stone-200 text-stone-800 text-[11px] font-semibold rounded-xl hover:bg-stone-300 transition">
-                  Ver Foto
-                </button>
-              </div>
-            `;
-          }
-        }).join('');
-      }
-
-      document.getElementById('modal-ficha-manutencao').classList.remove('hidden');
-      lucide.createIcons();
-    }
-
-    function fecharFichaManutencao() {
-      document.getElementById('modal-ficha-manutencao').classList.add('hidden');
-    }
-
-    // Modal Nova Manutenção com Múltiplos Arquivos
     function abrirModalManutencao() {
       document.getElementById('modal-titulo').innerText = "Registrar Manutenção & Fotos";
-      let optionsVeic = '';
-      veiculosCache.forEach(v => optionsVeic += `<option value="${v.id}">${v.nome} (${v.placa})</option>`);
-
+      let opts = veiculosCache.map(v => `<option value="${v.id}">${v.nome} (${v.placa})</option>`).join('');
       document.getElementById('modal-corpo').innerHTML = `
-        <form onsubmit="salvarManutencao(event)" class="space-y-3">
-          <div><label class="text-[11px] font-semibold text-stone-600">Veículo</label><select id="m-veic" required class="input-padrao">${optionsVeic}</select></div>
-          <div><label class="text-[11px] font-semibold text-stone-600">Descrição do Serviço</label><textarea id="m-desc" required rows="2" class="input-padrao" placeholder="Ex: Troca de filtros, óleo do câmbio, pastilhas..."></textarea></div>
+        <div class="space-y-3">
+          <div><label class="text-[11px] font-semibold">Veículo</label><select id="m-veic" class="input-padrao">${opts}</select></div>
+          <div><label class="text-[11px] font-semibold">Descrição</label><textarea id="m-desc" rows="2" class="input-padrao" placeholder="Serviço realizado..."></textarea></div>
           <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[11px] font-semibold text-stone-600">Data</label><input id="m-data" required type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
-            <div><label class="text-[11px] font-semibold text-stone-600">Horímetro / KM</label><input id="m-km" required type="number" step="0.1" class="input-padrao" placeholder="0"></div>
+            <div><label class="text-[11px] font-semibold">Data</label><input id="m-data" type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
+            <div><label class="text-[11px] font-semibold">KM / Horímetro</label><input id="m-km" type="number" step="0.1" class="input-padrao" placeholder="0"></div>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[11px] font-semibold text-stone-600">Valor (R$)</label><input id="m-val" type="number" step="0.01" class="input-padrao" placeholder="0,00"></div>
-            <div><label class="text-[11px] font-semibold text-stone-600">Oficina</label><input id="m-ofic" class="input-padrao" placeholder="Nome da oficina"></div>
+            <div><label class="text-[11px] font-semibold">Valor (R$)</label><input id="m-val" type="number" step="0.01" class="input-padrao" placeholder="0,00"></div>
+            <div><label class="text-[11px] font-semibold">Oficina</label><input id="m-ofic" class="input-padrao" placeholder="Nome da oficina"></div>
           </div>
-          <div class="p-3 bg-stone-50 border border-stone-200 rounded-2xl space-y-1">
-            <label class="text-[11px] font-bold text-stone-700 flex items-center gap-1"><i data-lucide="image" class="w-3.5 h-3.5 text-[#E06A3B]"></i> Selecionar Fotos e Notas (Pode marcar várias)</label>
-            <input id="m-files" type="file" multiple accept="image/*,application/pdf" class="text-xs text-stone-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-stone-200 file:text-stone-700">
-            <p class="text-[10px] text-stone-400">Você pode anexar fotos da galeria e arquivos PDF da nota fiscal juntos.</p>
+          <div class="p-3 bg-stone-50 border rounded-2xl">
+            <label class="text-[11px] font-bold block mb-1">Fotos e Notas Fiscais (Múltiplas)</label>
+            <input id="m-files" type="file" multiple accept="image/*,application/pdf" class="text-xs">
           </div>
-          <button type="submit" id="btn-salvar-manut" class="w-full py-2.5 rounded-xl bg-[#1C1E1D] text-white font-semibold text-xs mt-2 transition shadow-sm">Salvar Manutenção & Anexos</button>
-        </form>
+          <button type="button" onclick="salvarManutencao()" id="btn-save-m" class="w-full py-2.5 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">Salvar Manutenção</button>
+        </div>
       `;
       abrirModal();
     }
 
-    async function salvarManutencao(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btn-salvar-manut');
+    async function salvarManutencao() {
+      const btn = document.getElementById('btn-save-m');
+      btn.innerText = "Enviando arquivos...";
       btn.disabled = true;
 
       const veiculoId = document.getElementById('m-veic').value;
-      const km = parseFloat(document.getElementById('m-km').value);
+      const km = parseFloat(document.getElementById('m-km').value || 0);
       const files = document.getElementById('m-files').files;
-      let listaAnexos = [];
+      let anexos = [];
 
-      if (files && files.length > 0) {
-        btn.innerText = `Enviando ${files.length} anexo(s)...`;
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          const ext = file.name.split('.').pop().toLowerCase();
-          const isPdf = ext === 'pdf' || file.type.includes('pdf');
-          const filePath = `${usuarioAtual.id}/manut_${Date.now()}_${i}.${ext}`;
-          
-          const { error: upErr } = await sbClient.storage.from('er_gestao_arquivos').upload(filePath, file);
-          if (!upErr) {
-            const { data: signData } = await sbClient.storage.from('er_gestao_arquivos').createSignedUrl(filePath, 31536000);
-            if (signData) {
-              listaAnexos.push({ 
-                nome: file.name, 
-                url: signData.signedUrl, 
-                path: filePath, 
-                tipo: isPdf ? 'pdf' : 'image' 
-              });
-            }
-          }
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        const isPdf = f.name.toLowerCase().endsWith('.pdf') || f.type.includes('pdf');
+        const path = `${usuarioAtual.id}/manut_${Date.now()}_${i}.${f.name.split('.').pop()}`;
+        const { error } = await sbClient.storage.from('er_gestao_arquivos').upload(path, f);
+        if (!error) {
+          const { data: s } = await sbClient.storage.from('er_gestao_arquivos').createSignedUrl(path, 31536000);
+          if (s) anexos.push({ nome: f.name, url: s.signedUrl, path, tipo: isPdf ? 'pdf' : 'image' });
         }
       }
 
@@ -916,229 +512,166 @@
         km_horimetro: km,
         valor: parseFloat(document.getElementById('m-val').value || 0),
         oficina_fornecedor: document.getElementById('m-ofic').value,
-        comprovante_url: listaAnexos.length > 0 ? JSON.stringify(listaAnexos) : null
+        comprovante_url: anexos.length > 0 ? JSON.stringify(anexos) : null
       });
 
-      if (km > 0) {
-        await sbClient.from('veiculos').update({ km_horimetro_atual: km }).eq('id', veiculoId);
-      }
-
+      if (km > 0) await sbClient.from('veiculos').update({ km_horimetro_atual: km }).eq('id', veiculoId);
       fecharModal();
       carregarTudoDoBanco();
     }
 
-    // ================= DESPESAS & GASTOS =================
     function renderizarGastos() {
-      const categorias = obterCategoriasAtuais();
-      const divTopicos = document.getElementById('grade-topicos-categorias');
-
-      divTopicos.innerHTML = categorias.map(cat => {
-        const totalCat = gastosCache.filter(g => g.categoria === cat).reduce((acc, g) => acc + Number(g.valor), 0);
-        const ativo = categoriaFiltroAtual === cat;
-        return `
-          <button onclick="filtrarCategoriaGasto('${cat}')" class="p-3 sm:p-3.5 rounded-2xl border text-left transition ${ativo ? 'bg-stone-100 border-stone-800 shadow-xs' : 'bg-white border-stone-200/90 hover:border-stone-400'}">
-            <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-stone-400 block mb-1 truncate">${cat}</span>
-            <span class="text-xs sm:text-sm font-bold text-stone-950">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalCat)}</span>
-          </button>
-        `;
+      const cats = ambienteAtual === 'pessoa_fisica' ? ['Combustível', 'Supermercado', 'Restaurante', 'Loja', 'Outros'] : ['Combustível', 'Manutenção', 'Peças', 'Contas', 'Outros'];
+      document.getElementById('grade-topicos-categorias').innerHTML = cats.map(c => {
+        const total = gastosCache.filter(g => g.categoria === c).reduce((acc, g) => acc + Number(g.valor), 0);
+        return `<div class="p-3 bg-white border border-stone-200 rounded-2xl"><div class="text-[9px] uppercase font-bold text-stone-400">${c}</div><div class="text-xs font-bold mt-1">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</div></div>`;
       }).join('');
 
-      let gastosFiltrados = gastosCache;
-      if (categoriaFiltroAtual !== 'todas') {
-        gastosFiltrados = gastosCache.filter(g => g.categoria === categoriaFiltroAtual);
-      }
-
-      const tabela = document.getElementById('tabela-gastos');
-      if (gastosFiltrados.length === 0) {
-        tabela.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-stone-400">Nenhum gasto neste tópico.</td></tr>';
-      } else {
-        tabela.innerHTML = gastosFiltrados.map(g => `
-          <tr class="hover:bg-stone-50/60 transition">
-            <td class="py-3 px-4 font-semibold text-stone-900">${g.descricao}</td>
-            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-md bg-stone-100 text-stone-700 font-medium">${g.categoria}</span></td>
-            <td class="py-3 px-4 text-stone-500">${g.data}</td>
-            <td class="py-3 px-4 text-stone-600">${g.fornecedor || '—'}</td>
-            <td class="py-3 px-4 font-bold text-stone-950">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(g.valor)}</td>
-            <td class="py-3 px-4 text-right">
-              <button onclick="excluirRegistro('gastos', '${g.id}')" class="text-stone-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3.5 h-3.5 inline"></i></button>
-            </td>
-          </tr>
-        `).join('');
-      }
+      document.getElementById('tabela-gastos').innerHTML = gastosCache.map(g => `
+        <tr class="hover:bg-stone-50"><td class="p-3 font-semibold">${g.descricao}</td><td class="p-3"><span class="px-2 py-0.5 bg-stone-100 rounded text-stone-700">${g.categoria}</span></td><td class="p-3 text-stone-400">${g.data}</td><td class="p-3 font-bold">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(g.valor)}</td><td class="p-3 text-right"><button onclick="excluirRegistro('gastos', '${g.id}')" class="text-stone-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></td></tr>
+      `).join('') || '<tr><td colspan="5" class="p-6 text-center text-stone-400">Nenhum gasto registrado.</td></tr>';
     }
-
-    function filtrarCategoriaGasto(cat) { categoriaFiltroAtual = cat; renderizarGastos(); lucide.createIcons(); }
 
     function abrirModalGasto() {
       document.getElementById('modal-titulo').innerText = "Novo Gasto";
-      const categorias = obterCategoriasAtuais();
-      const optionsCat = categorias.map(c => `<option value="${c}">${c}</option>`).join('');
-
+      const cats = ambienteAtual === 'pessoa_fisica' ? ['Supermercado', 'Combustível', 'Restaurante', 'Loja', 'Outros'] : ['Combustível', 'Manutenção', 'Peças', 'Contas', 'Outros'];
+      const opts = cats.map(c => `<option value="${c}">${c}</option>`).join('');
       document.getElementById('modal-corpo').innerHTML = `
-        <form onsubmit="salvarGasto(event)" class="space-y-3">
-          <div><label class="text-[11px] font-semibold text-stone-600">Descrição</label><input id="g-desc" required class="input-padrao" placeholder="Ex: Compra de peças ou combustível"></div>
+        <div class="space-y-3">
+          <div><label class="text-[11px] font-semibold">Descrição</label><input id="g-desc" class="input-padrao" placeholder="Ex: Compra ou serviço"></div>
           <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[11px] font-semibold text-stone-600">Valor (R$)</label><input id="g-val" required type="number" step="0.01" class="input-padrao" placeholder="0,00"></div>
-            <div><label class="text-[11px] font-semibold text-stone-600">Data</label><input id="g-data" required type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
+            <div><label class="text-[11px] font-semibold">Valor (R$)</label><input id="g-val" type="number" step="0.01" class="input-padrao" placeholder="0,00"></div>
+            <div><label class="text-[11px] font-semibold">Data</label><input id="g-data" type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[11px] font-semibold text-stone-600">Tópico</label><select id="g-cat" class="input-padrao">${optionsCat}</select></div>
-            <div><label class="text-[11px] font-semibold text-stone-600">Fornecedor</label><input id="g-forn" class="input-padrao" placeholder="Local / Posto"></div>
-          </div>
-          <button type="submit" class="w-full py-2.5 rounded-xl bg-[#1C1E1D] text-white font-semibold text-xs mt-2">Salvar Gasto</button>
-        </form>
+          <div><label class="text-[11px] font-semibold">Tópico</label><select id="g-cat" class="input-padrao">${opts}</select></div>
+          <button type="button" onclick="salvarGasto()" class="w-full py-2.5 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">Gravar Gasto</button>
+        </div>
       `;
       abrirModal();
     }
 
-    async function salvarGasto(e) {
-      e.preventDefault();
+    async function salvarGasto() {
       await sbClient.from('gastos').insert({
         user_id: usuarioAtual.id,
         ambiente: ambienteAtual,
         descricao: document.getElementById('g-desc').value,
-        valor: parseFloat(document.getElementById('g-val').value),
+        valor: parseFloat(document.getElementById('g-val').value || 0),
         data: document.getElementById('g-data').value,
         categoria: document.getElementById('g-cat').value,
-        fornecedor: document.getElementById('g-forn').value,
         forma_pagamento: 'Pix'
       });
       fecharModal();
       carregarTudoDoBanco();
     }
 
-    function abrirModalNovaCategoria() {
-      document.getElementById('modal-titulo').innerText = "Nova Categoria / Tópico";
-      document.getElementById('modal-corpo').innerHTML = `
-        <form onsubmit="adicionarCategoriaForm(event)" class="space-y-3">
-          <div><label class="text-[11px] font-semibold text-stone-600">Nome da Nova Categoria</label><input id="nova-cat-nome" required class="input-padrao" placeholder="Ex: Farmácia, Lazer..."></div>
-          <button type="submit" class="w-full py-2.5 rounded-xl bg-[#1C1E1D] text-white font-semibold text-xs mt-2">Criar Tópico</button>
-        </form>
-      `;
-      abrirModal();
-    }
-
-    function adicionarCategoriaForm(e) {
-      e.preventDefault();
-      salvarNovaCategoria(document.getElementById('nova-cat-nome').value);
-      fecharModal();
-      renderizarGastos();
-      lucide.createIcons();
-    }
-
-    // ================= VEÍCULOS =================
     function renderizarVeiculos() {
-      const lista = document.getElementById('lista-veiculos');
-      if (veiculosCache.length === 0) {
-        lista.innerHTML = '<div class="col-span-full bg-white p-12 text-center rounded-2xl border border-stone-200 text-stone-400 text-xs">Nenhum veículo cadastrado.</div>';
-      } else {
-        lista.innerHTML = veiculosCache.map(v => `
-          <div class="bg-white border border-stone-200/80 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-[9px] font-bold uppercase tracking-wider text-stone-500 bg-stone-100 px-2 py-0.5 rounded">${v.tipo}</span>
-                <h3 class="text-base font-bold text-stone-900 mt-1">${v.nome}</h3>
-                <p class="text-xs text-stone-400">${v.marca || ''} • ${v.modelo || ''}</p>
-              </div>
-              <button onclick="excluirRegistro('veiculos', '${v.id}')" class="text-stone-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-            </div>
-            <div class="text-xs space-y-1.5 py-2 border-t border-stone-100 text-stone-600">
-              <div class="flex justify-between items-center"><span class="text-stone-400">Placa:</span> <span class="font-mono font-semibold">${v.placa || 'S/P'}</span></div>
-              <div class="flex justify-between items-center"><span class="text-stone-400">Horímetro / KM:</span> <span class="font-bold">${v.km_horimetro_atual}</span></div>
-            </div>
-          </div>
-        `).join('');
-      }
+      document.getElementById('lista-veiculos').innerHTML = veiculosCache.map(v => `
+        <div class="p-4 bg-white border border-stone-200 rounded-2xl space-y-2">
+          <div class="flex justify-between items-start"><div><span class="text-[9px] bg-stone-100 px-1.5 py-0.5 rounded font-bold uppercase">${v.tipo}</span><h3 class="text-sm font-bold mt-1">${v.nome}</h3></div><button onclick="excluirRegistro('veiculos', '${v.id}')" class="text-stone-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>
+          <div class="text-xs text-stone-500 pt-2 border-t flex justify-between"><span>Placa: <b>${v.placa || 'S/P'}</b></span><span>KM: <b>${v.km_horimetro_atual}</b></span></div>
+        </div>
+      `).join('') || '<div class="col-span-full p-8 bg-white border rounded-2xl text-center text-stone-400 text-xs">Nenhum veículo cadastrado.</div>';
     }
 
     function abrirModalVeiculo() {
       document.getElementById('modal-titulo').innerText = "Cadastrar Veículo";
       document.getElementById('modal-corpo').innerHTML = `
-        <form onsubmit="salvarVeiculo(event)" class="space-y-3">
-          <div><label class="text-[11px] font-semibold text-stone-600">Nome / Identificação</label><input id="v-nome" required class="input-padrao" placeholder="Ex: Guindaste Liebherr 70T"></div>
+        <div class="space-y-3">
+          <div><label class="text-[11px] font-semibold">Nome</label><input id="v-nome" class="input-padrao" placeholder="Ex: Guindaste 70T"></div>
           <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[11px] font-semibold text-stone-600">Tipo</label><select id="v-tipo" class="input-padrao"><option>Guindaste</option><option>Caminhão</option><option>Carro</option><option>Outro</option></select></div>
-            <div><label class="text-[11px] font-semibold text-stone-600">Placa</label><input id="v-placa" class="input-padrao" placeholder="ABC-1234"></div>
+            <div><label class="text-[11px] font-semibold">Tipo</label><select id="v-tipo" class="input-padrao"><option>Guindaste</option><option>Caminhão</option><option>Carro</option><option>Outro</option></select></div>
+            <div><label class="text-[11px] font-semibold">Placa</label><input id="v-placa" class="input-padrao" placeholder="ABC-1234"></div>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[11px] font-semibold text-stone-600">Marca</label><input id="v-marca" class="input-padrao" placeholder="Ex: Scania"></div>
-            <div><label class="text-[11px] font-semibold text-stone-600">KM / Horímetro</label><input id="v-km" type="number" step="0.1" class="input-padrao" placeholder="0"></div>
-          </div>
-          <button type="submit" class="w-full py-2.5 rounded-xl bg-[#1C1E1D] text-white font-semibold text-xs mt-2">Salvar Veículo</button>
-        </form>
+          <div><label class="text-[11px] font-semibold">KM / Horímetro</label><input id="v-km" type="number" step="0.1" class="input-padrao" placeholder="0"></div>
+          <button type="button" onclick="salvarVeiculo()" class="w-full py-2.5 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">Salvar Veículo</button>
+        </div>
       `;
       abrirModal();
     }
 
-    async function salvarVeiculo(e) {
-      e.preventDefault();
+    async function salvarVeiculo() {
       await sbClient.from('veiculos').insert({
         user_id: usuarioAtual.id,
         ambiente: ambienteAtual,
         nome: document.getElementById('v-nome').value,
         tipo: document.getElementById('v-tipo').value,
         placa: document.getElementById('v-placa').value,
-        marca: document.getElementById('v-marca').value,
         km_horimetro_atual: parseFloat(document.getElementById('v-km').value || 0)
       });
       fecharModal();
       carregarTudoDoBanco();
     }
 
-    // ================= DOCUMENTOS POR PLACA =================
     function renderizarDocumentos() {
-      const divFiltros = document.getElementById('filtro-placas');
-      let botoes = `
-        <button onclick="setFiltroPlaca('todos')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${placaFiltroAtual === 'todos' ? 'bg-[#1C1E1D] text-white shadow-xs' : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'}">
-          <i data-lucide="files" class="w-3.5 h-3.5"></i> Todos
-        </button>
-      `;
+      const opts = veiculosCache.map(v => `<button onclick="filtrarDocs('${v.id}')" class="px-3 py-1 rounded-xl text-xs border ${placaFiltroAtual === v.id ? 'bg-[#1C1E1D] text-white' : 'bg-white text-stone-600'}">${v.placa || v.nome}</button>`).join('');
+      document.getElementById('filtro-placas').innerHTML = `<button onclick="filtrarDocs('todos')" class="px-3 py-1 rounded-xl text-xs border ${placaFiltroAtual === 'todos' ? 'bg-[#1C1E1D] text-white' : 'bg-white text-stone-600'}">Todos</button>` + opts;
 
-      veiculosCache.forEach(v => {
-        const ativo = placaFiltroAtual === v.id;
-        botoes += `
-          <button onclick="setFiltroPlaca('${v.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${ativo ? 'bg-[#1C1E1D] text-white shadow-xs' : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'}">
-            <span class="bg-stone-100 text-stone-800 px-1 rounded text-[10px] font-mono">${v.placa || 'S/P'}</span>
-            <span>${v.nome}</span>
-          </button>
-        `;
-      });
-      divFiltros.innerHTML = botoes;
-
-      let docsFiltrados = documentosCache;
-      if (placaFiltroAtual !== 'todos') {
-        docsFiltrados = documentosCache.filter(d => d.veiculo_id === placaFiltroAtual);
-      }
-
-      const grade = document.getElementById('grade-documentos');
-      if (docsFiltrados.length === 0) {
-        grade.innerHTML = '<div class="col-span-full bg-white p-12 text-center rounded-2xl border border-stone-200 text-stone-400 text-xs">Nenhum documento anexado.</div>';
-      } else {
-        grade.innerHTML = docsFiltrados.map(d => `
-          <div class="bg-white border border-stone-200/80 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-stone-700 font-mono">${d.veiculos?.placa || 'Geral'}</span>
-                <h3 class="text-sm font-bold text-stone-900 mt-1">${d.titulo}</h3>
-              </div>
-              <span class="text-[9px] font-bold text-stone-500 bg-stone-100 px-2 py-0.5 rounded-md">${d.categoria}</span>
-            </div>
-            <div class="pt-2 border-t border-stone-100 flex justify-between items-center text-xs">
-              <a href="${d.arquivo_url}" target="_blank" class="text-[#E06A3B] font-semibold hover:underline flex items-center gap-1"><i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar</a>
-              <button onclick="excluirRegistro('documentos', '${d.id}')" class="text-stone-400 hover:text-red-600"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-            </div>
-          </div>
-        `).join('');
-      }
+      let docs = placaFiltroAtual === 'todos' ? documentosCache : documentosCache.filter(d => d.veiculo_id === placaFiltroAtual);
+      document.getElementById('grade-documentos').innerHTML = docs.map(d => `
+        <div class="p-4 bg-white border border-stone-200 rounded-2xl flex justify-between items-center text-xs">
+          <div><div class="font-bold">${d.titulo}</div><div class="text-[10px] text-stone-400">${d.categoria} • ${d.veiculos?.placa || 'Geral'}</div></div>
+          <a href="${d.arquivo_url}" target="_blank" class="text-[#E06A3B] font-bold">Baixar</a>
+        </div>
+      `).join('') || '<div class="col-span-full p-8 bg-white border rounded-2xl text-center text-stone-400 text-xs">Nenhum documento.</div>';
     }
-
-    function setFiltroPlaca(id) { placaFiltroAtual = id; renderizarDocumentos(); lucide.createIcons(); }
+    function filtrarDocs(id) { placaFiltroAtual = id; renderizarDocumentos(); }
 
     function abrirModalDoc() {
       document.getElementById('modal-titulo').innerText = "Anexar Documento";
-      let optionsVeic = '<option value="">Geral / Sem placa</option>';
-      veiculosCache.forEach(v => optionsVeic += `<option value="${v.id}">${v.nome} (${v.placa})</option>`);
-
+      let opts = '<option value="">Geral</option>' + veiculosCache.map(v => `<option value="${v.id}">${v.nome} (${v.placa})</option>`).join('');
       document.getElementById('modal-corpo').innerHTML = `
-        <form onsubmit="salvarDocumento(event)" class="space-y-3">
-          <div><label class="text-[11px] font-semibold text-stone-600">Título</label><input id="d-titulo" required
+        <div class="space-y-3">
+          <div><label class="text-[11px] font-semibold">Título</label><input id="d-titulo" class="input-padrao" placeholder="CRLV 2026..."></div>
+          <div><label class="text-[11px] font-semibold">Veículo</label><select id="d-veic" class="input-padrao">${opts}</select></div>
+          <div><label class="text-[11px] font-semibold">Arquivo</label><input id="d-file" type="file" class="text-xs"></div>
+          <button type="button" onclick="salvarDocumento()" id="btn-doc" class="w-full py-2.5 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl">Enviar Arquivo</button>
+        </div>
+      `;
+      abrirModal();
+    }
+
+    async function salvarDocumento() {
+      const f = document.getElementById('d-file').files[0];
+      if (!f) return alert('Selecione um arquivo.');
+      const path = `${usuarioAtual.id}/doc_${Date.now()}.${f.name.split('.').pop()}`;
+      await sbClient.storage.from('er_gestao_arquivos').upload(path, f);
+      const { data: s } = await sbClient.storage.from('er_gestao_arquivos').createSignedUrl(path, 31536000);
+      await sbClient.from('documentos').insert({
+        user_id: usuarioAtual.id,
+        ambiente: ambienteAtual,
+        veiculo_id: document.getElementById('d-veic').value || null,
+        titulo: document.getElementById('d-titulo').value,
+        categoria: 'Documento',
+        arquivo_url: s.signedUrl,
+        arquivo_path: path
+      });
+      fecharModal();
+      carregarTudoDoBanco();
+    }
+
+    async function excluirRegistro(tabela, id) {
+      if (!confirm('Deseja excluir este registro?')) return;
+      await sbClient.from(tabela).delete().eq('id', id);
+      carregarTudoDoBanco();
+    }
+
+    function trocarAba(aba) {
+      ['assistente', 'dashboard', 'manutencoes', 'gastos', 'veiculos', 'documentos'].forEach(a => {
+        const el = document.getElementById('aba-' + a);
+        if (el) el.classList.add('hidden');
+        const btn = document.getElementById('btn-' + a);
+        if (btn) btn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50";
+      });
+      document.getElementById('aba-' + aba)?.classList.remove('hidden');
+      const btn = document.getElementById('btn-' + aba);
+      if (btn) btn.className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#2A2C2B] text-white";
+      const nomes = { assistente: 'Assistente', dashboard: 'Visão geral', manutencoes: 'Manutenções & Fotos', gastos: 'Despesas e registros', veiculos: 'Frota e equipamentos', documentos: 'Documentos' };
+      document.getElementById('breadcrumb-aba').innerText = nomes[aba] || 'Assistente';
+      lucide.createIcons();
+    }
+
+    function abrirModal() { document.getElementById('modal-container').classList.remove('hidden'); lucide.createIcons(); }
+    function fecharModal() { document.getElementById('modal-container').classList.add('hidden'); }
+  </script>
+</body>
+</html>
