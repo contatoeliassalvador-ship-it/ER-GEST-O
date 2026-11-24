@@ -1,19 +1,13 @@
 {
-  "name": "er-gestao-server",
+  "name": "er-gestao",
   "version": "1.0.0",
-  "description": "ER GESTAO com WhatsApp Baileys e IA Integrados",
+  "description": "ER GESTAO - Servidor Leve e Veloz",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "node --test test/*.test.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "@google/genai": "^3.0.0",
-    "@supabase/supabase-js": "^2.39.8",
-    "@whiskeysockets/baileys": "^6.7.8",
-    "express": "^4.19.2",
-    "pino": "^8.19.0",
-    "qrcode": "^1.5.3"
+    "express": "^4.19.2"
   },
   "engines": {
     "node": ">=18.0.0"
