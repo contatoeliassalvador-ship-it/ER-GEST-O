@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <!-- ================= BARRA SUPERIOR PARA CELULAR (STICKY NO MOBILE) ================= -->
+  <!-- ================= BARRA SUPERIOR PARA CELULAR (STICKY) ================= -->
   <div class="md:hidden bg-[#1C1E1D] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-30 border-b border-stone-800 shadow-sm">
     <div class="flex items-center gap-2.5">
       <button onclick="abrirBarraLateral()" class="p-1.5 rounded-xl bg-stone-800/80 text-stone-200 hover:bg-stone-700 border border-stone-700/60 active:scale-95 transition">
@@ -71,7 +71,6 @@
       <span class="text-xs font-bold tracking-wider">ASSISTENTE <span class="text-[#E06A3B]">ER</span></span>
     </div>
 
-    <!-- Toggle de Contexto no Celular -->
     <div class="relative">
       <button onclick="alternarContextoDrop()" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-stone-700/80 bg-stone-800/80 text-[11px] font-semibold text-stone-200">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -81,15 +80,13 @@
     </div>
   </div>
 
-  <!-- BACKDROP PARA FECHAR NO TOQUE (MOBILE) -->
+  <!-- BACKDROP MOBILE -->
   <div id="backdrop-lateral" onclick="fecharBarraLateral()" class="fixed inset-0 bg-stone-950/60 backdrop-blur-xs z-40 hidden md:hidden transition-opacity"></div>
 
-  <!-- ================= BARRA LATERAL RESPONSIVA (DESLIZANTE NO CELULAR) ================= -->
+  <!-- ================= BARRA LATERAL ESCURA ================= -->
   <aside id="barra-lateral" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#1C1E1D] text-stone-300 h-screen select-none border-r border-stone-800 transform -translate-x-full md:translate-x-0 md:static transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 shadow-2xl md:shadow-none">
     
     <div class="space-y-6">
-      
-      <!-- LOGO ER GUINDASTES + BOTÃO FECHAR NO CELULAR -->
       <div class="flex items-center justify-between px-1">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-xl bg-[#E06A3B] text-white flex items-center justify-center font-bold text-xs tracking-wider shadow-sm">
@@ -105,7 +102,6 @@
         </button>
       </div>
 
-      <!-- BOTÃO + NOVA CONVERSA -->
       <button onclick="trocarAbaMobile('assistente')" class="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold text-stone-200 border border-stone-700/60 hover:bg-stone-800/80 transition">
         <div class="flex items-center gap-2">
           <i data-lucide="edit-3" class="w-3.5 h-3.5 text-stone-400"></i>
@@ -114,7 +110,6 @@
         <span class="text-stone-500 text-sm font-light">+</span>
       </button>
 
-      <!-- ESPAÇO DE TRABALHO -->
       <div class="space-y-1">
         <span class="text-[9px] font-bold uppercase tracking-widest text-stone-500 px-3">Espaço de Trabalho</span>
         
@@ -131,9 +126,9 @@
           <span>Visão geral</span>
         </button>
 
-        <button onclick="trocarAbaMobile('veiculos')" id="btn-veiculos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
-          <i data-lucide="truck" class="w-4 h-4"></i>
-          <span>Frota e equipamentos</span>
+        <button onclick="trocarAbaMobile('manutencoes')" id="btn-manutencoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
+          <i data-lucide="wrench" class="w-4 h-4"></i>
+          <span>Manutenções & Fotos</span>
         </button>
 
         <button onclick="trocarAbaMobile('gastos')" id="btn-gastos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
@@ -141,9 +136,9 @@
           <span>Despesas e registros</span>
         </button>
 
-        <button onclick="trocarAbaMobile('manutencoes')" id="btn-manutencoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
-          <i data-lucide="wrench" class="w-4 h-4"></i>
-          <span>Manutenções & Fotos</span>
+        <button onclick="trocarAbaMobile('veiculos')" id="btn-veiculos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
+          <i data-lucide="truck" class="w-4 h-4"></i>
+          <span>Frota e equipamentos</span>
         </button>
 
         <button onclick="trocarAbaMobile('documentos')" id="btn-documentos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition">
@@ -154,7 +149,6 @@
 
     </div>
 
-    <!-- RODAPÉ DA BARRA LATERAL -->
     <div class="pt-4 border-t border-stone-800 space-y-3">
       <div class="px-2 text-[10px] text-stone-400 flex items-center justify-between">
         <span class="flex items-center gap-1.5">
@@ -183,7 +177,7 @@
   <!-- ================= CONTEÚDO PRINCIPAL ================= -->
   <main class="flex-1 flex flex-col min-w-0">
     
-    <!-- BARRA SUPERIOR PARA DESKTOP / TABLET -->
+    <!-- BARRA SUPERIOR DESKTOP -->
     <header class="hidden md:flex bg-white/80 backdrop-blur-sm border-b border-stone-200/80 px-6 py-3.5 items-center justify-between">
       <div class="flex items-center gap-2 text-xs font-medium text-stone-400">
         <span class="uppercase tracking-wider text-[10px] font-semibold text-stone-400">Espaço de trabalho</span>
@@ -209,7 +203,7 @@
       </div>
     </header>
 
-    <!-- DROPDOWN FLUTUANTE DE AMBIENTE (COMPARTILHADO MOBILE & DESKTOP) -->
+    <!-- DROPDOWN FLUTUANTE DE AMBIENTE -->
     <div id="drop-ambiente" class="hidden fixed top-14 right-4 md:right-16 w-52 bg-white border border-stone-200 rounded-2xl shadow-xl py-1.5 z-50 text-xs">
       <button onclick="selecionarAmbiente('empresa')" class="w-full text-left px-3.5 py-2.5 hover:bg-stone-50 font-semibold text-stone-800 flex items-center justify-between">
         <span>ER Guindastes</span>
@@ -221,17 +215,17 @@
       </button>
     </div>
 
-    <!-- ÁREA CENTRAL DE TELAS -->
+    <!-- ÁREA CENTRAL -->
     <div class="flex-1 p-4 sm:p-6 md:p-12 max-w-5xl w-full mx-auto">
 
-      <!-- ================= 1. ABA ASSISTENTE ================= -->
+      <!-- ================= 1. ABA ASSISTENTE (SEM O CARD DE ABASTECIMENTO) ================= -->
       <section id="aba-assistente" class="space-y-6 md:space-y-8 animate-fade-in">
         
         <div class="flex items-center justify-between text-[11px] text-stone-400">
           <span class="flex items-center gap-1.5 font-bold uppercase tracking-wider text-stone-500">
             <span class="w-1.5 h-1.5 rounded-full bg-stone-400"></span> Seu assistente administrativo
           </span>
-          <button onclick="alert('Dica: Você pode registrar gastos, manutenções com fotos, abastecimentos ou consultar dados da frota.')" class="hover:text-stone-700 flex items-center gap-1">
+          <button onclick="alert('Dica: Você pode lançar despesas, manutenções com fotos e consultar dados da operação.')" class="hover:text-stone-700 flex items-center gap-1">
             <i data-lucide="help-circle" class="w-3.5 h-3.5"></i> O que posso fazer?
           </button>
         </div>
@@ -250,60 +244,50 @@
           </h2>
 
           <p class="text-xs text-stone-500 max-w-md leading-relaxed">
-            Frota, despesas e documentos em uma conversa.<br class="hidden sm:inline">
+            Frota, despesas e documentos organizados.<br class="hidden sm:inline">
             Seu próximo registro começa por aqui.
           </p>
         </div>
 
-        <!-- 4 CARDS EXECUTIVOS (RESPONSIVOS) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 pt-1 md:pt-2">
+        <!-- 3 CARDS EXECUTIVOS LIMPOS (SEM ABASTECIMENTO) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 pt-1 md:pt-2">
           
-          <button onclick="abrirModalGastoCategoria('Combustível')" class="p-4 sm:p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
-            <div class="flex items-start justify-between">
-              <div class="flex items-center gap-3">
-                <i data-lucide="fuel" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B] transition"></i>
-                <div>
-                  <h3 class="text-xs font-bold text-stone-900">Registrar abastecimento</h3>
-                  <p class="text-[11px] text-stone-400 mt-0.5">Combustível e dados do veículo</p>
-                </div>
-              </div>
-              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800 transition"></i>
-            </div>
-          </button>
-
-          <button onclick="abrirModalGasto()" class="p-4 sm:p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
+          <!-- Card 1: Lançar Despesa -->
+          <button onclick="abrirModalGasto()" class="p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
                 <i data-lucide="receipt" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B] transition"></i>
                 <div>
                   <h3 class="text-xs font-bold text-stone-900">Lançar uma despesa</h3>
-                  <p class="text-[11px] text-stone-400 mt-0.5">Organize os gastos da operação</p>
+                  <p class="text-[11px] text-stone-400 mt-0.5">Organize os gastos e compras</p>
                 </div>
               </div>
               <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800 transition"></i>
             </div>
           </button>
 
-          <button onclick="abrirModalManutencao()" class="p-4 sm:p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
+          <!-- Card 2: Cuidar da Frota (Manutenções com Fotos e PDFs) -->
+          <button onclick="abrirModalManutencao()" class="p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
                 <i data-lucide="wrench" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B] transition"></i>
                 <div>
                   <h3 class="text-xs font-bold text-stone-900">Cuidar da frota</h3>
-                  <p class="text-[11px] text-stone-400 mt-0.5">Serviços e manutenções com fotos</p>
+                  <p class="text-[11px] text-stone-400 mt-0.5">Serviços, peças, fotos e notas</p>
                 </div>
               </div>
               <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800 transition"></i>
             </div>
           </button>
 
-          <button onclick="trocarAba('dashboard')" class="p-4 sm:p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
+          <!-- Card 3: Consultar Gastos -->
+          <button onclick="trocarAba('dashboard')" class="p-5 bg-white border border-stone-200/80 rounded-2xl text-left hover:border-stone-400 hover:shadow-xs transition group">
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
                 <i data-lucide="trending-up" class="w-4 h-4 text-stone-500 group-hover:text-[#E06A3B] transition"></i>
                 <div>
                   <h3 class="text-xs font-bold text-stone-900">Consultar os gastos</h3>
-                  <p class="text-[11px] text-stone-400 mt-0.5">Acompanhe os registros financeiros</p>
+                  <p class="text-[11px] text-stone-400 mt-0.5">Acompanhe os custos do mês</p>
                 </div>
               </div>
               <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-stone-300 group-hover:text-stone-800 transition"></i>
@@ -315,7 +299,7 @@
         <div class="pt-2 text-xs text-stone-400 flex items-center gap-2">
           <span>Experimente</span>
           <button onclick="trocarAba('veiculos')" class="text-stone-700 font-semibold hover:underline flex items-center gap-1">
-            "Liste os veículos cadastrados" <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
+            "Ver veículos cadastrados" <i data-lucide="arrow-up-right" class="w-3 h-3"></i>
           </button>
         </div>
 
@@ -358,15 +342,15 @@
         </div>
       </section>
 
-      <!-- ================= 3. ABA MANUTENÇÕES (COM GALERIA DE FOTOS) ================= -->
+      <!-- ================= 3. ABA MANUTENÇÕES (COM ABERTURA PERFEITA DE FOTOS E PDFS) ================= -->
       <section id="aba-manutencoes" class="space-y-5 hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 class="text-lg font-bold text-stone-900">Manutenções & Histórico</h2>
-            <p class="text-xs text-stone-400">Consulte serviços com fotos anexadas das peças e notas fiscais.</p>
+            <p class="text-xs text-stone-400">Toque nas fotos ou nos PDFs para abrir e visualizar os comprovantes.</p>
           </div>
           <button onclick="abrirModalManutencao()" class="px-4 py-2 bg-[#1C1E1D] hover:bg-stone-800 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5 shadow-xs w-fit">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Registrar Manutenção & Fotos
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Registrar Manutenção
           </button>
         </div>
         <div id="lista-manutencoes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
@@ -440,20 +424,48 @@
     </div>
   </main>
 
-  <!-- ================= MODAL DE FOTO EM TELA CHEIA ================= -->
-  <div id="modal-foto-viewer" class="fixed inset-0 bg-stone-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+  <!-- ================= MODAL DE FOTO EM TELA CHEIA (BLINDADO) ================= -->
+  <div id="modal-foto-viewer" class="fixed inset-0 bg-stone-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
     <div class="bg-white rounded-3xl p-5 max-w-2xl w-full max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
         <h3 id="foto-viewer-titulo" class="text-xs font-bold text-stone-900 truncate">Foto da Peça / Serviço</h3>
         <button onclick="fecharFotoViewer()" class="text-stone-400 hover:text-stone-700 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div class="flex justify-center bg-stone-100 rounded-2xl p-2 overflow-hidden">
-        <img id="foto-viewer-img" src="" alt="Anexo" class="max-h-[60vh] object-contain rounded-xl" />
+        <img id="foto-viewer-img" src="" alt="Anexo" class="max-h-[60vh] object-contain rounded-xl shadow-xs" />
       </div>
-      <div class="flex justify-end gap-2 pt-2">
+      <div class="flex justify-between items-center pt-2">
+        <span class="text-[11px] text-stone-400">Toque em baixar para salvar no seu dispositivo.</span>
         <a id="foto-viewer-download" href="" target="_blank" class="px-4 py-2 bg-[#1C1E1D] text-white text-xs font-semibold rounded-xl hover:bg-stone-800 flex items-center gap-1.5">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar Arquivo Original
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar Arquivo
         </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL DE FICHA COMPLETA DA MANUTENÇÃO ================= -->
+  <div id="modal-ficha-manutencao" class="fixed inset-0 bg-stone-950/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white rounded-3xl p-6 max-w-xl w-full max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <span id="ficha-veiculo" class="text-[10px] font-bold uppercase tracking-wider text-stone-400"></span>
+          <h3 id="ficha-servico" class="text-sm font-bold text-stone-900 mt-0.5"></h3>
+        </div>
+        <button onclick="fecharFichaManutencao()" class="text-stone-400 hover:text-stone-700 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 text-xs bg-stone-50 p-3.5 rounded-2xl border border-stone-200/80">
+        <div><span class="text-stone-400 block">Data do Serviço:</span> <span id="ficha-data" class="font-semibold text-stone-800"></span></div>
+        <div><span class="text-stone-400 block">Horímetro / KM:</span> <span id="ficha-km" class="font-semibold text-stone-800"></span></div>
+        <div><span class="text-stone-400 block">Oficina / Prestador:</span> <span id="ficha-oficina" class="font-semibold text-stone-800"></span></div>
+        <div><span class="text-stone-400 block">Valor Pago:</span> <span id="ficha-valor" class="font-bold text-stone-950"></span></div>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+          <i data-lucide="paperclip" class="w-3.5 h-3.5 text-[#E06A3B]"></i> Fotos e Documentos Anexados
+        </h4>
+        <div id="ficha-anexos-galeria" class="space-y-2"></div>
       </div>
     </div>
   </div>
@@ -485,10 +497,12 @@
     let manutencoesCache = [];
     let documentosCache = [];
 
+    // MAPA SEGURO DE ANEXOS NA MEMÓRIA (EVITA ERRO DE CLIQUE COM CARACTERES ESPECIAIS)
+    window.anexosMemoria = {};
+
     const CATEGORIAS_BASE_PF = ['Combustível', 'Supermercado', 'Restaurante', 'Loja', 'Contas', 'Saúde', 'Outros'];
     const CATEGORIAS_BASE_EMPRESA = ['Combustível', 'Manutenção', 'Peças', 'Pneus', 'Impostos', 'Contas', 'Serviços', 'Outros'];
 
-    // Controle da Barra Lateral no Celular
     function abrirBarraLateral() {
       document.getElementById('barra-lateral').classList.remove('-translate-x-full');
       document.getElementById('backdrop-lateral').classList.remove('hidden');
@@ -560,7 +574,6 @@
       document.getElementById('tela-login').classList.remove('hidden');
     }
 
-    // Dropdown de Contexto
     function alternarContextoDrop() {
       document.getElementById('drop-ambiente').classList.toggle('hidden');
     }
@@ -658,13 +671,15 @@
       }
     }
 
-    // ================= MANUTENÇÕES COM A SUA GALERIA DE FOTOS =================
+    // ================= MANUTENÇÕES COM ABERTURA DE FOTOS E PDFS GARANTIDA =================
     function renderizarManutencoes() {
       const lista = document.getElementById('lista-manutencoes');
       if (manutencoesCache.length === 0) {
         lista.innerHTML = '<div class="col-span-full bg-white p-12 text-center rounded-2xl border border-stone-200 text-stone-400 text-xs">Nenhuma manutenção registrada.</div>';
         return;
       }
+
+      window.anexosMemoria = {};
 
       lista.innerHTML = manutencoesCache.map(m => {
         let anexos = [];
@@ -678,31 +693,60 @@
           }
         }
 
+        // Guarda os anexos na memória indexados pelo ID da manutenção
+        window.anexosMemoria[m.id] = anexos;
+
         let galeriaHTML = '';
         if (anexos.length > 0) {
           galeriaHTML = `
-            <div class="pt-3 border-t border-stone-100 space-y-1.5">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 flex items-center gap-1">
-                <i data-lucide="paperclip" class="w-3 h-3 text-[#E06A3B]"></i> Fotos e Peças (${anexos.length})
-              </span>
-              <div class="flex flex-wrap gap-2 pt-1">
-                ${anexos.map(a => `
-                  <img src="${a.url}" alt="${a.nome}" onclick="abrirFotoViewer('${a.url}', '${a.nome}')" 
-                       class="w-12 h-12 object-cover rounded-xl border border-stone-200 hover:opacity-80 transition cursor-pointer shadow-2xs" />
-                `).join('')}
+            <div class="pt-3 border-t border-stone-100 space-y-2">
+              <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                <span class="flex items-center gap-1">
+                  <i data-lucide="paperclip" class="w-3 h-3 text-[#E06A3B]"></i> Anexos (${anexos.length})
+                </span>
+                <button onclick="abrirFichaManutencao('${m.id}')" class="text-[#E06A3B] hover:underline flex items-center gap-0.5">
+                  Ver Ficha & Fotos <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                </button>
+              </div>
+
+              <div class="flex flex-wrap gap-2 pt-0.5">
+                ${anexos.map((a, idx) => {
+                  const isPdf = a.tipo === 'pdf' || (a.nome && a.nome.toLowerCase().endsWith('.pdf')) || a.url.toLowerCase().includes('.pdf');
+                  if (isPdf) {
+                    return `
+                      <button onclick="abrirAnexoDireto('${m.id}', ${idx})" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-[11px] font-semibold text-red-700 border border-red-200/80 transition">
+                        <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
+                        <span class="truncate max-w-[130px]">${a.nome || 'Visualizar PDF'}</span>
+                      </button>
+                    `;
+                  } else {
+                    return `
+                      <div class="relative group cursor-pointer" onclick="abrirAnexoDireto('${m.id}', ${idx})">
+                        <img src="${a.url}" alt="${a.nome}" 
+                             class="w-14 h-14 object-cover rounded-xl border border-stone-200 group-hover:border-stone-800 transition shadow-2xs" />
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent rounded-xl flex items-center justify-center transition">
+                          <i data-lucide="zoom-in" class="w-3.5 h-3.5 text-white drop-shadow-sm"></i>
+                        </div>
+                      </div>
+                    `;
+                  }
+                }).join('')}
               </div>
             </div>
           `;
         }
 
         return `
-          <div class="bg-white border border-stone-200/90 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs">
+          <div class="bg-white border border-stone-200/90 rounded-2xl p-4 sm:p-5 space-y-3 shadow-2xs hover:border-stone-400 transition">
             <div class="flex justify-between items-start">
               <div>
                 <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400">${m.veiculos?.nome || 'Equipamento'} (${m.veiculos?.placa || 'S/P'})</span>
                 <h3 class="text-sm font-bold text-stone-900 mt-0.5">${m.descricao_servico}</h3>
               </div>
-              <button onclick="excluirRegistro('manutencoes', '${m.id}')" class="text-stone-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              <div class="flex items-center gap-1">
+                <button onclick="abrirFichaManutencao('${m.id}')" title="Ver detalhes completos" class="text-stone-400 hover:text-stone-700 p-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i></button>
+                <button onclick="excluirRegistro('manutencoes', '${m.id}')" class="text-stone-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              </div>
             </div>
             <div class="grid grid-cols-2 gap-2 text-xs text-stone-600 pt-2 border-t border-stone-100">
               <div><span class="text-stone-400">Data:</span> ${m.data_manutencao}</div>
@@ -714,6 +758,23 @@
           </div>
         `;
       }).join('');
+    }
+
+    // Abertura Direta e Segura de Qualquer Anexo (Foto ou PDF)
+    function abrirAnexoDireto(mId, idx) {
+      const anexos = window.anexosMemoria[mId];
+      if (!anexos || !anexos[idx]) return alert('Arquivo não encontrado.');
+      const a = anexos[idx];
+
+      const isPdf = a.tipo === 'pdf' || (a.nome && a.nome.toLowerCase().endsWith('.pdf')) || a.url.toLowerCase().includes('.pdf');
+
+      if (isPdf) {
+        // Abre o PDF em nova aba sem travar o navegador
+        window.open(a.url, '_blank');
+      } else {
+        // Abre foto em modal de tela cheia
+        abrirFotoViewer(a.url, a.nome);
+      }
     }
 
     function abrirFotoViewer(url, titulo) {
@@ -728,6 +789,63 @@
       document.getElementById('modal-foto-viewer').classList.add('hidden');
     }
 
+    // Modal de Ficha Completa
+    function abrirFichaManutencao(id) {
+      const m = manutencoesCache.find(item => item.id === id);
+      if (!m) return;
+
+      document.getElementById('ficha-veiculo').innerText = `${m.veiculos?.nome || 'Veículo'} (${m.veiculos?.placa || 'Sem Placa'})`;
+      document.getElementById('ficha-servico').innerText = m.descricao_servico;
+      document.getElementById('ficha-data').innerText = m.data_manutencao;
+      document.getElementById('ficha-km').innerText = m.km_horimetro;
+      document.getElementById('ficha-oficina').innerText = m.oficina_fornecedor || 'Não informada';
+      document.getElementById('ficha-valor').innerText = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(m.valor);
+
+      const anexos = window.anexosMemoria[m.id] || [];
+      const divGaleria = document.getElementById('ficha-anexos-galeria');
+
+      if (anexos.length === 0) {
+        divGaleria.innerHTML = '<p class="text-xs text-stone-400 py-3 text-center">Nenhuma foto ou nota fiscal anexada a esta manutenção.</p>';
+      } else {
+        divGaleria.innerHTML = anexos.map((a, idx) => {
+          const isPdf = a.tipo === 'pdf' || (a.nome && a.nome.toLowerCase().endsWith('.pdf')) || a.url.toLowerCase().includes('.pdf');
+          if (isPdf) {
+            return `
+              <div class="flex items-center justify-between p-3 bg-stone-50 border border-stone-200 rounded-2xl">
+                <div class="flex items-center gap-2 text-xs font-semibold text-stone-800">
+                  <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
+                  <span class="truncate max-w-[250px]">${a.nome || 'Documento PDF'}</span>
+                </div>
+                <a href="${a.url}" target="_blank" class="px-3 py-1.5 bg-[#1C1E1D] text-white text-[11px] font-semibold rounded-xl hover:bg-stone-800 transition">
+                  Abrir PDF
+                </a>
+              </div>
+            `;
+          } else {
+            return `
+              <div class="flex items-center justify-between p-2.5 bg-stone-50 border border-stone-200 rounded-2xl">
+                <div class="flex items-center gap-3">
+                  <img src="${a.url}" class="w-12 h-12 object-cover rounded-xl border border-stone-200" />
+                  <span class="text-xs font-semibold text-stone-800 truncate max-w-[200px]">${a.nome || 'Foto'}</span>
+                </div>
+                <button onclick="abrirFotoViewer('${a.url}', '${a.nome}')" class="px-3 py-1.5 bg-stone-200 text-stone-800 text-[11px] font-semibold rounded-xl hover:bg-stone-300 transition">
+                  Ver Foto
+                </button>
+              </div>
+            `;
+          }
+        }).join('');
+      }
+
+      document.getElementById('modal-ficha-manutencao').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function fecharFichaManutencao() {
+      document.getElementById('modal-ficha-manutencao').classList.add('hidden');
+    }
+
+    // Modal Nova Manutenção com Múltiplos Arquivos
     function abrirModalManutencao() {
       document.getElementById('modal-titulo').innerText = "Registrar Manutenção & Fotos";
       let optionsVeic = '';
@@ -736,7 +854,7 @@
       document.getElementById('modal-corpo').innerHTML = `
         <form onsubmit="salvarManutencao(event)" class="space-y-3">
           <div><label class="text-[11px] font-semibold text-stone-600">Veículo</label><select id="m-veic" required class="input-padrao">${optionsVeic}</select></div>
-          <div><label class="text-[11px] font-semibold text-stone-600">Serviço Realizado</label><textarea id="m-desc" required rows="2" class="input-padrao" placeholder="Descrição do serviço..."></textarea></div>
+          <div><label class="text-[11px] font-semibold text-stone-600">Descrição do Serviço</label><textarea id="m-desc" required rows="2" class="input-padrao" placeholder="Ex: Troca de filtros, óleo do câmbio, pastilhas..."></textarea></div>
           <div class="grid grid-cols-2 gap-2">
             <div><label class="text-[11px] font-semibold text-stone-600">Data</label><input id="m-data" required type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
             <div><label class="text-[11px] font-semibold text-stone-600">Horímetro / KM</label><input id="m-km" required type="number" step="0.1" class="input-padrao" placeholder="0"></div>
@@ -746,10 +864,11 @@
             <div><label class="text-[11px] font-semibold text-stone-600">Oficina</label><input id="m-ofic" class="input-padrao" placeholder="Nome da oficina"></div>
           </div>
           <div class="p-3 bg-stone-50 border border-stone-200 rounded-2xl space-y-1">
-            <label class="text-[11px] font-bold text-stone-700 flex items-center gap-1"><i data-lucide="image" class="w-3.5 h-3.5 text-[#E06A3B]"></i> Selecionar Fotos da Galeria</label>
+            <label class="text-[11px] font-bold text-stone-700 flex items-center gap-1"><i data-lucide="image" class="w-3.5 h-3.5 text-[#E06A3B]"></i> Selecionar Fotos e Notas (Pode marcar várias)</label>
             <input id="m-files" type="file" multiple accept="image/*,application/pdf" class="text-xs text-stone-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-stone-200 file:text-stone-700">
+            <p class="text-[10px] text-stone-400">Você pode anexar fotos da galeria e arquivos PDF da nota fiscal juntos.</p>
           </div>
-          <button type="submit" id="btn-salvar-manut" class="w-full py-2.5 rounded-xl bg-[#1C1E1D] text-white font-semibold text-xs mt-2">Salvar Manutenção</button>
+          <button type="submit" id="btn-salvar-manut" class="w-full py-2.5 rounded-xl bg-[#1C1E1D] text-white font-semibold text-xs mt-2 transition shadow-sm">Salvar Manutenção & Anexos</button>
         </form>
       `;
       abrirModal();
@@ -766,15 +885,24 @@
       let listaAnexos = [];
 
       if (files && files.length > 0) {
-        btn.innerText = `Enviando ${files.length} foto(s)...`;
+        btn.innerText = `Enviando ${files.length} anexo(s)...`;
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
-          const ext = file.name.split('.').pop();
+          const ext = file.name.split('.').pop().toLowerCase();
+          const isPdf = ext === 'pdf' || file.type.includes('pdf');
           const filePath = `${usuarioAtual.id}/manut_${Date.now()}_${i}.${ext}`;
+          
           const { error: upErr } = await sbClient.storage.from('er_gestao_arquivos').upload(filePath, file);
           if (!upErr) {
             const { data: signData } = await sbClient.storage.from('er_gestao_arquivos').createSignedUrl(filePath, 31536000);
-            if (signData) listaAnexos.push({ nome: file.name, url: signData.signedUrl, path: filePath, tipo: file.type });
+            if (signData) {
+              listaAnexos.push({ 
+                nome: file.name, 
+                url: signData.signedUrl, 
+                path: filePath, 
+                tipo: isPdf ? 'pdf' : 'image' 
+              });
+            }
           }
         }
       }
@@ -848,7 +976,7 @@
 
       document.getElementById('modal-corpo').innerHTML = `
         <form onsubmit="salvarGasto(event)" class="space-y-3">
-          <div><label class="text-[11px] font-semibold text-stone-600">Descrição</label><input id="g-desc" required class="input-padrao" placeholder="Ex: Abastecimento, compra..."></div>
+          <div><label class="text-[11px] font-semibold text-stone-600">Descrição</label><input id="g-desc" required class="input-padrao" placeholder="Ex: Compra de peças ou combustível"></div>
           <div class="grid grid-cols-2 gap-2">
             <div><label class="text-[11px] font-semibold text-stone-600">Valor (R$)</label><input id="g-val" required type="number" step="0.01" class="input-padrao" placeholder="0,00"></div>
             <div><label class="text-[11px] font-semibold text-stone-600">Data</label><input id="g-data" required type="date" value="${new Date().toISOString().slice(0,10)}" class="input-padrao"></div>
@@ -861,11 +989,6 @@
         </form>
       `;
       abrirModal();
-    }
-
-    function abrirModalGastoCategoria(catFixa) {
-      abrirModalGasto();
-      document.getElementById('g-cat').value = catFixa;
     }
 
     async function salvarGasto(e) {
@@ -962,7 +1085,7 @@
       carregarTudoDoBanco();
     }
 
-    // ================= DOCUMENTOS =================
+    // ================= DOCUMENTOS POR PLACA =================
     function renderizarDocumentos() {
       const divFiltros = document.getElementById('filtro-placas');
       let botoes = `
@@ -1018,90 +1141,4 @@
 
       document.getElementById('modal-corpo').innerHTML = `
         <form onsubmit="salvarDocumento(event)" class="space-y-3">
-          <div><label class="text-[11px] font-semibold text-stone-600">Título</label><input id="d-titulo" required class="input-padrao" placeholder="Ex: CRLV 2026, ART, Laudo..."></div>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-[11px] font-semibold text-stone-600">Categoria</label><select id="d-cat" class="input-padrao"><option>CRLV / Documento</option><option>Laudo Técnico</option><option>Nota Fiscal</option><option>Contrato</option></select></div>
-            <div><label class="text-[11px] font-semibold text-stone-600">Veículo</label><select id="d-veic" class="input-padrao">${optionsVeic}</select></div>
-          </div>
-          <div><label class="text-[11px] font-semibold text-stone-600">Arquivo</label><input id="d-file" required type="file" class="text-xs text-stone-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-stone-200 file:text-stone-700"></div>
-          <button type="submit" id="btn-upload" class="w-full py-2.5 rounded-xl bg-[#1C1E1D] text-white font-semibold text-xs mt-2">Fazer Upload</button>
-        </form>
-      `;
-      abrirModal();
-    }
-
-    async function salvarDocumento(e) {
-      e.preventDefault();
-      const file = document.getElementById('d-file').files[0];
-      if (!file) return alert('Selecione um arquivo.');
-      const btn = document.getElementById('btn-upload');
-      btn.innerText = "Enviando arquivo...";
-      btn.disabled = true;
-
-      try {
-        const ext = file.name.split('.').pop();
-        const filePath = `${usuarioAtual.id}/doc_${Date.now()}.${ext}`;
-        await sbClient.storage.from('er_gestao_arquivos').upload(filePath, file);
-        const { data: signData } = await sbClient.storage.from('er_gestao_arquivos').createSignedUrl(filePath, 31536000);
-
-        await sbClient.from('documentos').insert({
-          user_id: usuarioAtual.id,
-          ambiente: ambienteAtual,
-          veiculo_id: document.getElementById('d-veic').value || null,
-          titulo: document.getElementById('d-titulo').value,
-          categoria: document.getElementById('d-cat').value,
-          arquivo_url: signData.signedUrl,
-          arquivo_path: filePath
-        });
-
-        fecharModal();
-        carregarTudoDoBanco();
-      } catch (err) {
-        alert(err.message);
-      } finally {
-        btn.innerText = "Fazer Upload";
-        btn.disabled = false;
-      }
-    }
-
-    async function excluirRegistro(tabela, id) {
-      if (!confirm('Deseja excluir este registro?')) return;
-      await sbClient.from(tabela).delete().eq('id', id);
-      carregarTudoDoBanco();
-    }
-
-    function trocarAba(aba) {
-      ['assistente', 'dashboard', 'manutencoes', 'gastos', 'veiculos', 'documentos'].forEach(a => {
-        const el = document.getElementById('aba-' + a);
-        if (el) el.classList.add('hidden');
-        const btn = document.getElementById('btn-' + a);
-        if (btn) {
-          btn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-stone-400 hover:text-white hover:bg-stone-800/50 transition";
-        }
-      });
-
-      const abaAtiva = document.getElementById('aba-' + aba);
-      if (abaAtiva) abaAtiva.classList.remove('hidden');
-
-      const btnAtivo = document.getElementById('btn-' + aba);
-      if (btnAtivo) {
-        btnAtivo.className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-[#2A2C2B] text-white transition";
-      }
-
-      const nomes = {
-        assistente: 'Assistente',
-        dashboard: 'Visão geral',
-        manutencoes: 'Manutenções & Fotos',
-        gastos: 'Despesas e registros',
-        veiculos: 'Frota e equipamentos',
-        documentos: 'Documentos'
-      };
-      document.getElementById('breadcrumb-aba').innerText = nomes[aba] || 'Assistente';
-      lucide.createIcons();
-    }
-
-    function abrirModal() { document.getElementById('modal-container').classList.remove('hidden'); lucide.createIcons(); }
-    function fecharModal() { document.getElementById('modal-container').classList.add('hidden'); }
-  </script>
-</body>
-  </html>
+          <div><label class="text-[11px] font-semibold text-stone-600">Título</label><input id="d-titulo" required
